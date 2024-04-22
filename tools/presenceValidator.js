@@ -11,7 +11,7 @@ const presence_validator = async () => {
     formatted_array.Student.forEach((student) => {
       // Delete the "Student" word because we already know that it's an student ID
       let student_id = student.split(" ")[1];
-      students.push(student_id);
+      students[student_id] = [];
     });
 
     formatted_array.Presence.forEach((presence) => {
