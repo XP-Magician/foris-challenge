@@ -12,7 +12,7 @@ export const VALIDATOR_PRESENCE_DETAILS = (
   students_list,
   presence_to_verify
 ) => {
-  if (!students_list.includes(presence_to_verify.student_id))
+  if (students_list[presence_to_verify.student_id] === undefined)
     return ERROR_DICTIONARY.STUDENT_NOT_REGISTERED;
   let { enter_hour, left_hour } = presence_to_verify;
   enter_hour = DateTime.fromISO(enter_hour);
