@@ -11,6 +11,7 @@ const ERROR_DICTIONARY = {
     "The presence isn't valid because the enter time is greather than the left time.",
   INVALID_COMMAND_FORMAT:
     "The command don't have a valid format, check your entries carefully.",
+  INDICATOR_STRING: "     -----------> Reason: ",
 };
 
 export default ERROR_DICTIONARY;
