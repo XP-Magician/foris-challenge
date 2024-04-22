@@ -41,7 +41,11 @@ const formatFile = async () => {
 
         // It's an invalid input, goes to Discarded ones
         default:
-          formatted_commands.Discarded.push(raw_command);
+          formatted_commands.Discarded.push(
+            raw_command +
+              ERROR_DICTIONARY.INDICATOR_STRING +
+              ERROR_DICTIONARY.INVALID_COMMAND_FORMAT
+          );
           break;
       }
     });
