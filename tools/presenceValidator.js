@@ -6,7 +6,6 @@ const presence_validator = async () => {
   try {
     const formatted_array = await formatted_commands();
     let students_presence = [];
-    let presences = [];
     let discarded = formatted_array.Discarded;
     formatted_array.Student.forEach((student) => {
       // Delete the "Student" word because we already know that it's an student ID
