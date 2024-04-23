@@ -5,7 +5,7 @@ import ERROR_DICTIONARY from "../utils/errorsDictionary.js";
 const presence_validator = async () => {
   try {
     const formatted_array = await formatted_commands();
-    let students_presence = [];
+    let students_presence = {};
     let discarded = formatted_array.Discarded;
     formatted_array.Student.forEach((student) => {
       // Delete the "Student" word because we already know that it's an student ID
@@ -33,8 +33,7 @@ const presence_validator = async () => {
         presence_details
       );
       if (result_validation_presence === true) {
-        const { student_id, ...presence } = presence_details;
-        students_presence[presence_details.student_id].push(presence);
+        students_presence[presence_details.student_id].push(presence_details);
       } else {
         discarded.push(
           presence +
@@ -45,11 +44,7 @@ const presence_validator = async () => {
     });
 
     // These ones are going to be analized by a script in order to relationating students and presences
-    const valid_entries = {
-      Students: students_presence,
-      Discarded: discarded,
-    };
-    return valid_entries;
+    return { students_presence, discarded };
   } catch (exception) {
     throw exception;
   }
