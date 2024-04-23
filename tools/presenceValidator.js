@@ -35,7 +35,7 @@ const presence_validator = async () => {
       );
       if (result_validation_presence === true) {
         const { student_id, ...presence } = presence_details;
-        students_presence[presence_details.student_id].push(presence_details);
+        students_presence[presence_details.student_id].push(presence);
       } else {
         discarded.push(
           presence +
@@ -48,7 +48,6 @@ const presence_validator = async () => {
     // These ones are going to be analized by a script in order to relationating students and presences
     const valid_entries = {
       Students: students_presence,
-      Presences: presences,
       Discarded: discarded,
     };
     return valid_entries;
