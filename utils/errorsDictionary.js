@@ -15,6 +15,8 @@ const ERROR_DICTIONARY = {
   DISCARDED_COMMAND_SEPARATOR:
     "\n\n ==================== DISCARDED COMMANDS =======================",
   NO_DISCARDED_COMMANDS: "No discarded commands\n\n ",
+  MINUTES_DISPLAY:
+    "\n\n ==================== COMMANDS RESULTS =======================",
 };
 
 export default ERROR_DICTIONARY;
