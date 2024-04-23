@@ -56,4 +56,4 @@ const calculateDays = (student_presence, different_days) => {
   return minutes_presence;
 };
 
-compileCommands();
+export default compileCommands;
