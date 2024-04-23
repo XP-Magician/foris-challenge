@@ -6,6 +6,7 @@ export const VALIDATORS = {
   PRESENCE_COMMAND:
     /^Presence [\w]+ [1-7] ((0[8-9])?(1[0-9])?(2[0-3])?:([0-5][0-9]\s)){2}[A-Z]\d{3}$/, // Format should be like : Presence David 3 10:58 12:05 R205
   MIN_DIFF_TIME: 300000, // 5 Minutes min to register the attendance (in milis)
+  MILIS_TO_MINUTES: 60000,
 };
 
 export const VALIDATOR_PRESENCE_DETAILS = (
