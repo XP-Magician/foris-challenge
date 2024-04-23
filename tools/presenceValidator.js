@@ -5,13 +5,13 @@ import ERROR_DICTIONARY from "../utils/errorsDictionary.js";
 const presence_validator = async () => {
   try {
     const formatted_array = await formatted_commands();
-    let students = [];
+    let students_presence = [];
     let presences = [];
     let discarded = formatted_array.Discarded;
     formatted_array.Student.forEach((student) => {
       // Delete the "Student" word because we already know that it's an student ID
       let student_id = student.split(" ")[1];
-      students[student_id] = [];
+      students_presence[student_id] = [];
     });
 
     formatted_array.Presence.forEach((presence) => {
@@ -30,11 +30,12 @@ const presence_validator = async () => {
 
       // This is going to return true if the presence_details is valid, or an informative String if it's not.
       const result_validation_presence = VALIDATOR_PRESENCE_DETAILS(
-        students,
+        students_presence,
         presence_details
       );
       if (result_validation_presence === true) {
-        presences.push(presence_details);
+        const { student_id, ...presence } = presence_details;
+        students_presence[presence_details.student_id].push(presence_details);
       } else {
         discarded.push(
           presence +
@@ -46,7 +47,7 @@ const presence_validator = async () => {
 
     // These ones are going to be analized by a script in order to relationating students and presences
     const valid_entries = {
-      Students: students,
+      Students: students_presence,
       Presences: presences,
       Discarded: discarded,
     };
