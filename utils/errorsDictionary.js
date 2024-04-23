@@ -12,6 +12,9 @@ const ERROR_DICTIONARY = {
   INVALID_COMMAND_FORMAT:
     "The command don't have a valid format, check your entries carefully.",
   INDICATOR_STRING: "     -----------> Reason: ",
+  DISCARDED_COMMAND_SEPARATOR:
+    "\n\n ==================== DISCARDED COMMANDS =======================",
+  NO_DISCARDED_COMMANDS: "No discarded commands\n\n ",
 };
 
 export default ERROR_DICTIONARY;
