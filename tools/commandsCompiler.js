@@ -43,7 +43,7 @@ export const compileCommands = async () => {
 };
 
 // We use calculateDays as a helper to get the difference in minutes and whether the days are more than one or not
-const calculateDays = (student_presence, different_days) => {
+export const calculateDays = (student_presence, different_days) => {
   let { day, enter_hour, left_hour } = student_presence;
   if (!different_days.includes(day)) different_days.push(day);
   enter_hour = DateTime.fromISO(enter_hour);
@@ -55,7 +55,7 @@ const calculateDays = (student_presence, different_days) => {
 };
 
 // Extract and transform raw_minutes into a comparable int
-const extractRawMinutes = (presence_string) => {
+export const extractRawMinutes = (presence_string) => {
   const minutes_raw =
     VALIDATORS.EXTRACT_MINUTES_FROM_STR.exec(presence_string)[0].split(" "); // Get something like : 25 minutes , and separate them to keep just the number
   const minutes_formatted = parseInt(minutes_raw[0]);
