@@ -59,7 +59,6 @@ const extractRawMinutes = (presence_string) => {
   const minutes_raw =
     VALIDATORS.EXTRACT_MINUTES_FROM_STR.exec(presence_string)[0].split(" "); // Get something like : 25 minutes , and separate them to keep just the number
   const minutes_formatted = parseInt(minutes_raw[0]);
-  console.log(minutes_formatted);
   return minutes_formatted;
 };
 
