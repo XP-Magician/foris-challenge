@@ -3,7 +3,7 @@ import { VALIDATORS } from "../helpers/validators.js";
 import { DateTime } from "luxon";
 import ERROR_DICTIONARY from "../utils/errorsDictionary.js";
 
-const compileCommands = async () => {
+export const compileCommands = async () => {
   try {
     // At this point we could pick these data an put them into a database because it's sanitize and validate.
     let { students_presence, discarded } = await presenceValidator();
@@ -65,16 +65,18 @@ const extractRawMinutes = (presence_string) => {
 
 const showLogger = async () => {
   try {
+    const { processed_presences, discarded } = await compileCommands();
+    console.log(ERROR_DICTIONARY.MINUTES_DISPLAY);
+    processed_presences.forEach((presence) => console.log(presence));
+    console.log(ERROR_DICTIONARY.DISCARDED_COMMAND_SEPARATOR);
+    console.log(
+      discarded.length === 0
+        ? ERROR_DICTIONARY.NO_DISCARDED_COMMANDS
+        : discarded
+    );
   } catch (exception) {
     console.log(exception.message);
   }
-  const { processed_presences, discarded } = await compileCommands();
-  console.log(ERROR_DICTIONARY.MINUTES_DISPLAY);
-  processed_presences.forEach((presence) => console.log(presence));
-  console.log(ERROR_DICTIONARY.DISCARDED_COMMAND_SEPARATOR);
-  console.log(
-    discarded.length === 0 ? ERROR_DICTIONARY.NO_DISCARDED_COMMANDS : discarded
-  );
 };
 
 export default showLogger;
