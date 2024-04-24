@@ -5,12 +5,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "test": "npx mocha test --recursive",
     "test_commands": "npx mocha test/validations/commandStructure.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chai": "^5.1.0",
     "luxon": "^3.4.4",
     "mocha": "^10.4.0"
   }
