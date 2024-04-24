@@ -31,6 +31,11 @@ const compileCommands = async () => {
           break;
       }
     });
+    processed_presences.sort((presence_string1, presence_string2) => {
+      const minutes_presence1 = extractRawMinutes(presence_string1);
+      const minutes_presence2 = extractRawMinutes(presence_string2);
+      return minutes_presence2 - minutes_presence1;
+    });
     console.log(ERROR_DICTIONARY.MINUTES_DISPLAY);
     processed_presences.forEach((presence) => console.log(presence));
     console.log(ERROR_DICTIONARY.DISCARDED_COMMAND_SEPARATOR);
@@ -54,6 +59,15 @@ const calculateDays = (student_presence, different_days) => {
     (left_hour.toMillis() - enter_hour.toMillis()) /
     VALIDATORS.MILIS_TO_MINUTES;
   return minutes_presence;
+};
+
+// Extract and transform raw_minutes into a comparable int
+const extractRawMinutes = (presence_string) => {
+  const minutes_raw =
+    VALIDATORS.EXTRACT_MINUTES_FROM_STR.exec(presence_string)[0].split(" "); // Get something like : 25 minutes , and separate them to keep just the number
+  const minutes_formatted = parseInt(minutes_raw[0]);
+  console.log(minutes_formatted);
+  return minutes_formatted;
 };
 
 export default compileCommands;
