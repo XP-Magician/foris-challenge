@@ -2,9 +2,8 @@ import readFile from "./fileReader.js";
 import ERROR_DICTIONARY from "../utils/errorsDictionary.js";
 import { VALIDATORS } from "../helpers/validators.js";
 
-export const getFile = async () => {
+export const getFile = async (filename) => {
   try {
-    const filename = process.argv[2];
     if (filename === undefined)
       throw new Error(ERROR_DICTIONARY.FILENAME_NOT_PROVIDED);
     const raw_array_commands = await readFile(filename);
@@ -16,6 +15,10 @@ export const getFile = async () => {
   } catch (exception) {
     throw exception;
   }
+};
+
+const getFileBinder = async () => {
+  return await getFile(process.argv[2]);
 };
 
 export const formatFile = async (raw_commands) => {
@@ -56,4 +59,4 @@ export const formatFile = async (raw_commands) => {
   }
 };
 
-export default getFile;
+export default getFileBinder;
