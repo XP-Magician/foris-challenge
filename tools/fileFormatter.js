@@ -8,17 +8,18 @@ const getFile = async () => {
     if (filename === undefined)
       throw new Error(ERROR_DICTIONARY.FILENAME_NOT_PROVIDED);
     const raw_array_commands = await readFile(filename);
-    return raw_array_commands.filter(
+    const raw_commands_filter = raw_array_commands.filter(
       (raw_command) => raw_command.trim() !== ""
     );
+    const formatted_commands = await formatFile(raw_commands_filter);
+    return formatted_commands;
   } catch (exception) {
     throw exception;
   }
 };
 
-const formatFile = async () => {
+const formatFile = async (raw_commands) => {
   try {
-    const raw_commands = await getFile();
     let formatted_commands = {
       Student: [],
       Presence: [],
@@ -55,4 +56,4 @@ const formatFile = async () => {
   }
 };
 
-export default formatFile;
+export default getFile;
