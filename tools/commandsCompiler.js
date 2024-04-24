@@ -36,16 +36,9 @@ const compileCommands = async () => {
       const minutes_presence2 = extractRawMinutes(presence_string2);
       return minutes_presence2 - minutes_presence1;
     });
-    console.log(ERROR_DICTIONARY.MINUTES_DISPLAY);
-    processed_presences.forEach((presence) => console.log(presence));
-    console.log(ERROR_DICTIONARY.DISCARDED_COMMAND_SEPARATOR);
-    console.log(
-      discarded.length === 0
-        ? ERROR_DICTIONARY.NO_DISCARDED_COMMANDS
-        : discarded
-    );
+    return { processed_presences, discarded };
   } catch (exception) {
-    console.log(exception.message);
+    throw exception;
   }
 };
 
@@ -70,4 +63,18 @@ const extractRawMinutes = (presence_string) => {
   return minutes_formatted;
 };
 
-export default compileCommands;
+const showLogger = async () => {
+  try {
+  } catch (exception) {
+    console.log(exception.message);
+  }
+  const { processed_presences, discarded } = await compileCommands();
+  console.log(ERROR_DICTIONARY.MINUTES_DISPLAY);
+  processed_presences.forEach((presence) => console.log(presence));
+  console.log(ERROR_DICTIONARY.DISCARDED_COMMAND_SEPARATOR);
+  console.log(
+    discarded.length === 0 ? ERROR_DICTIONARY.NO_DISCARDED_COMMANDS : discarded
+  );
+};
+
+export default showLogger;
