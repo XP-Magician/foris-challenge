@@ -2,7 +2,7 @@ import readFile from "./fileReader.js";
 import ERROR_DICTIONARY from "../utils/errorsDictionary.js";
 import { VALIDATORS } from "../helpers/validators.js";
 
-const getFile = async () => {
+export const getFile = async () => {
   try {
     const filename = process.argv[2];
     if (filename === undefined)
