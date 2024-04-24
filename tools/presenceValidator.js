@@ -2,9 +2,8 @@ import formatted_commands from "./fileFormatter.js";
 import { VALIDATOR_PRESENCE_DETAILS } from "../helpers/validators.js";
 import ERROR_DICTIONARY from "../utils/errorsDictionary.js";
 
-const presence_validator = async () => {
+export const presence_validator = async (formatted_array) => {
   try {
-    const formatted_array = await formatted_commands();
     let students_presence = {};
     let discarded = formatted_array.Discarded;
     formatted_array.Student.forEach((student) => {
@@ -50,4 +49,9 @@ const presence_validator = async () => {
   }
 };
 
-export default presence_validator;
+const presence_validator_binder = async () => {
+  const formatted_array = await formatted_commands();
+  return await presence_validator(formatted_array);
+};
+
+export default presence_validator_binder;
