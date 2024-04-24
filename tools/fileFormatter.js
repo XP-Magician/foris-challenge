@@ -18,7 +18,7 @@ const getFile = async () => {
   }
 };
 
-const formatFile = async (raw_commands) => {
+export const formatFile = async (raw_commands) => {
   try {
     let formatted_commands = {
       Student: [],
