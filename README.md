@@ -185,8 +185,8 @@ _nota: más adelante en este documento se detallan todos los scripts._
 
 #### Diagrama explicativo de las dependencias entre scripts 🛣️ :
 
-![](https://i.ibb.co/sWhgwGZ/waa.png)
-[Url imagen](https://i.ibb.co/sWhgwGZ/waa.png)<br><br>
+![](https://i.postimg.cc/NFLJD2db/waa.png)
+[Url imagen](https://i.postimg.cc/NFLJD2db/waa.png)<br><br>
 
 #### Explicación detallada de los directorios y sus scripts📂📋 :
 
@@ -251,8 +251,8 @@ const VALIDATOR_PRESENCE_DETAILS = (
   let { enter_hour, left_hour } = presence_to_verify;
   enter_hour = DateTime.fromISO(enter_hour);
   left_hour = DateTime.fromISO(left_hour);
-  if (left_hour < enter_hour) return;
   // No válido si la hora de entrada es mayor a la de salida
+  if (left_hour < enter_hour) return;
   ERROR_DICTIONARY.ENTER_GREATHER_THAN_LEFT;
   if (left_hour.toMillis() - enter_hour.toMillis() < VALIDATORS.MIN_DIFF_TIME)
     // No válido si la presencia es menor al tiempo mínimo indicado
