@@ -599,37 +599,66 @@ _Resultado final : 4/4 tests pasados._ <br><br>
   Contiene tests para validar 15 casos de usos asociados al formato de cada comando:<br>
   **Para el Comando de Estudiante**:
 
-      **Test 1: **Verifica si el sistema reconoce correctamente una estructura de comando inesperada o inválida.
+**Test 1: **Verifica si el sistema reconoce correctamente una estructura de comando inesperada o inválida.
+**Test 2: **Comprueba si el sistema detecta correctamente la ausencia del campo "name_student".
+**Test 3:** Evalúa si el sistema acepta correctamente la estructura esperada del comando.
+**Test 4: **Verifica si el sistema detecta correctamente el exceso de indentación al inicio y al final de la cadena.
+**Test 5:** Comprueba si el sistema detecta correctamente el exceso de indentación entre la palabra clave "Student" y el nombre del estudiante.
+**Test 6: **Evalúa si el sistema detecta correctamente la sensibilidad a mayúsculas y minúsculas en la palabra clave "Student".<br><br>
+**Para el Comando de Presencia:**
 
-  **Test 2: **Comprueba si el sistema detecta correctamente la ausencia del campo "name_student".
-  **Test 3:** Evalúa si el sistema acepta correctamente la estructura esperada del comando.
-  **Test 4: **Verifica si el sistema detecta correctamente el exceso de indentación al inicio y al final de la cadena.
-  **Test 5:** Comprueba si el sistema detecta correctamente el exceso de indentación entre la palabra clave "Student" y el nombre del estudiante.
-  **Test 6: **Evalúa si el sistema detecta correctamente la sensibilidad a mayúsculas y minúsculas en la palabra clave "Student".<br><br>
-  **Para el Comando de Presencia:**
-
-      **Test 1:** Verifica si el sistema reconoce correctamente una estructura de comando inesperada o inválida.
-
-  **Test 2:** Comprueba si el sistema detecta correctamente la ausencia de algún campo requerido, en este caso, el nombre del estudiante.
-  **Test 3:** Evalúa si el sistema acepta correctamente la estructura esperada del comando.
-  **Test 4:** Verifica si el sistema detecta correctamente un día de la semana inválido.
-  **Test 5: **Comprueba si el sistema detecta correctamente un formato de hora no permitido para la hora de entrada.
-  **Test 6: **Evalúa si el sistema detecta correctamente un formato de hora no permitido para la hora de salida.
-  **Test 7:** Verifica si el sistema detecta correctamente un código de aula no válido.
-  **Test 8:** Comprueba si el sistema detecta correctamente el exceso de indentación al inicio y al final de la cadena.
-  **Test 9:** Evalúa si el sistema detecta correctamente el exceso de indentación entre la palabra clave "Presence" y los campos.
+**Test 1:** Verifica si el sistema reconoce correctamente una estructura de comando inesperada o inválida.
+**Test 2:** Comprueba si el sistema detecta correctamente la ausencia de algún campo requerido, en este caso, el nombre del estudiante.
+**Test 3:** Evalúa si el sistema acepta correctamente la estructura esperada del comando.
+**Test 4:** Verifica si el sistema detecta correctamente un día de la semana inválido.
+**Test 5: **Comprueba si el sistema detecta correctamente un formato de hora no permitido para la hora de entrada.
+**Test 6: **Evalúa si el sistema detecta correctamente un formato de hora no permitido para la hora de salida.
+**Test 7:** Verifica si el sistema detecta correctamente un código de aula no válido.
+**Test 8:** Comprueba si el sistema detecta correctamente el exceso de indentación al inicio y al final de la cadena.
+**Test 9:** Evalúa si el sistema detecta correctamente el exceso de indentación entre la palabra clave "Presence" y los campos.
 
 _Resultado final : 15/15 tests pasados._ <br><br>
 
 - **validations/commandsValues.js** :<br>
   Contiene tests para validar 7 casos de usos complejos asociados a los valores contenidos en cada comando:<br>
 
-      **Test 1: **Verifica la validez de varios formatos especiales del comando 'Student', incluyendo comandos con identación extra en las esquinas..
+**Test 1: **Verifica la validez de varios formatos especiales del comando 'Student', incluyendo comandos con identación extra en las esquinas..
+**Test 2: **Evalúa cómo el sistema maneja la duplicación de valores en los comandos 'Student' y 'Presence', asegurando que se ignoren los duplicados..
+**Test 3:** Verifica si el sistema descarta correctamente comandos inválidos, incluyendo comandos con estructuras incorrectas y valores incorrectos.
+**Test 4: **Evalúa el comportamiento del sistema cuando se proporcionan tanto comandos válidos como inválidos, asegurando que los comandos válidos sean procesados correctamente y los inválidos sean descartados.
+**Test 5:** Verifica si el sistema devuelve un error adecuado cuando se intenta registrar la presencia de un estudiante que no ha sido registrado previamente.
+**Test 6: **Evalúa si el sistema devuelve un error cuando la diferencia entre la hora de entrada y salida en un comando de presencia es menor a 5 minutos.
+**Test 7: **Verifica si el sistema devuelve un error cuando la hora de entrada es mayor que la hora de salida en un comando de presencia.<br>
+_Resultado final : 7/7 tests pasados._ <br><br>
 
-  **Test 2: **Evalúa cómo el sistema maneja la duplicación de valores en los comandos 'Student' y 'Presence', asegurando que se ignoren los duplicados..
-  **Test 3:** Verifica si el sistema descarta correctamente comandos inválidos, incluyendo comandos con estructuras incorrectas y valores incorrectos.
-  **Test 4: **Evalúa el comportamiento del sistema cuando se proporcionan tanto comandos válidos como inválidos, asegurando que los comandos válidos sean procesados correctamente y los inválidos sean descartados.
-  **Test 5:** Verifica si el sistema devuelve un error adecuado cuando se intenta registrar la presencia de un estudiante que no ha sido registrado previamente.
-  **Test 6: **Evalúa si el sistema devuelve un error cuando la diferencia entre la hora de entrada y salida en un comando de presencia es menor a 5 minutos.
-  **Test 7: **Verifica si el sistema devuelve un error cuando la hora de entrada es mayor que la hora de salida en un comando de presencia.<br>
-  _Resultado final : 7/7 tests pasados._ <br><br>
+### Levantando el proyecto 👩‍🚀🚀
+
+Asegúrate de tener Node.js instalado en tu sistema. Puedes descargarlo desde [nodejs.org](https://nodejs.org/).
+
+1. Clona este repositorio o descarga el archivo ZIP.
+2. Abre una terminal y navega hasta la carpeta del proyecto.
+3. Ejecuta el siguiente comando para instalar las dependencias: <br>
+   `npm install`
+
+### Dependencias 📚⚙️
+
+[Chai](https://www.chaijs.com/): Biblioteca de aserciones para Node.js y navegadores.
+[Mocha](https://mochajs.org/):Framework de pruebas para Node.js.
+[Luxon](https://moment.github.io/luxon/#/?id=luxon): Biblioteca moderna de manipulación de fechas y horas para JavaScript.
+
+### Ejecución y scripts asociados: 🏃‍♂️🏃
+
+- `node app.js tuFichero.txt`: Este comando iniciará el procesamiento del archivo que le indiques para finalmente imprimirlo por consola. Recuerda que el directorio por defecto está definido en _utils/config.js_<br><br>
+- `npm run test`: Este comando ejecutará todos los test asociados a todos los módulos del sistema.<br><br>
+- `npm run test_commands`: Este comando ejecutará todos los test asociados únicamente a el formato básico a cumplimentar de los comandos.<br><br>
+- `npm run "test_commands_values"`: Este comando ejecutará todos los test asociados únicamente a los valores a cumplimentar de los comandos y que estos sean íntegros.<br><br>
+- ` npm run test_file_handler`: Este comando ejecutará todos los test asociados únicamente a el manejo de ficheros.<br><br>
+- `npm run test_commands_compiler`: Este comando ejecutará todos los test asociados únicamente a el procesamiento final de los comandos saneados.<br><br>
+
+### 🙋 Candidato
+
+- 🌟 Diego Fábrega Elizalde
+- 📞 (9)90622898
+- `<Mi web>` : <https://www.dafe.pro>
+- 📩 contacto@dafe.pro
+- 📌 https://github.com/XP-Magician
