@@ -164,10 +164,10 @@ _nota: más adelante en este documento se detallan todos los scripts._
 
 - A continuación se detalla de forma general cada directorio y su funcionalidad, para mas adelante en este documento, especificar detalles y funcionamiento asociado :
 
-- 📂** commands **: Este es el directorio por defecto al que se van a buscar los ficheros .txt con comandos solicitados. Por ejemplo si se hace <br>`node app.js misComandos.txt` , el fichero "misComandos.txt"
+- 📂**commands**: Este es el directorio por defecto al que se van a buscar los ficheros .txt con comandos solicitados. Por ejemplo si se hace <br>`node app.js misComandos.txt` , el fichero "misComandos.txt"
   será buscado en este directorio. Sin embargo se puede cambiar este comportamiento por defecto. <br>
 
-- 📂** helpers **: Este directorio contiene un script que actúa a bajo nivel en la aplicación para realizar validaciones básicas en los comandos y determinar si son válidos o no. Como se mencionó, actúa con expresiones regulares para hacer estas validaciones. La ventaja de esto es que las expresiones regulares estan centralizadas aquí. Por lo que si se requiere un cambio de estructura en la validación, cualquier cambio aplicará de inmediato a toda la aplicación. A continuación un ejemplo de input, y la respuesta generada en base a esta validación: <br>
+- 📂**helpers**: Este directorio contiene un script que actúa a bajo nivel en la aplicación para realizar validaciones básicas en los comandos y determinar si son válidos o no. Como se mencionó, actúa con expresiones regulares para hacer estas validaciones. La ventaja de esto es que las expresiones regulares estan centralizadas aquí. Por lo que si se requiere un cambio de estructura en la validación, cualquier cambio aplicará de inmediato a toda la aplicación. A continuación un ejemplo de input, y la respuesta generada en base a esta validación: <br>
 
 - ![](https://i.imgur.com/v4r4hvR.png)
   [Url imagen](https://i.imgur.com/v4r4hvR.png)
@@ -177,11 +177,11 @@ _nota: más adelante en este documento se detallan todos los scripts._
   [Url imagen](https://i.imgur.com/8sEa8EF.png)
   _Todos quedarían descartados gracias a las validaciones y parámetros establecidos en este directorio_
 
-- 📂** test **: Como te imaginarás, este directorio contiene todo el testing de cada funcionalidad de la aplicación, contemplando cada caso de uso posible de forma rigurosa.
+- 📂**test**: Como te imaginarás, este directorio contiene todo el testing de cada funcionalidad de la aplicación, contemplando cada caso de uso posible de forma rigurosa.
 
-- 📂** tools **: Este directorio es el núcleo de la aplicación. Contiene diversos scripts utilizados para la lectura de ficheros, manipulación de sus datos, validaciones complejas asociadas, y entrega del resultado final al usuario. Se comunica con los demás scripts que actúan como asistentes en sus labores más complejas.
+- 📂**tools**: Este directorio es el núcleo de la aplicación. Contiene diversos scripts utilizados para la lectura de ficheros, manipulación de sus datos, validaciones complejas asociadas, y entrega del resultado final al usuario. Se comunica con los demás scripts que actúan como asistentes en sus labores más complejas.
 
-- 📂** utils **: Este directorio contiene scripts de utilidad como por ejemplo un archivo de configuración, al que se hace referencia en el núcleo de la aplicación _(directorio tools)_, y un diccionario de errores informativos que buscan dar feedback al usuario de sus inputs erróneos para que pueda corregirlos con mayor facilidad.<br><br>
+- 📂**utils**: Este directorio contiene scripts de utilidad como por ejemplo un archivo de configuración, al que se hace referencia en el núcleo de la aplicación _(directorio tools)_, y un diccionario de errores informativos que buscan dar feedback al usuario de sus inputs erróneos para que pueda corregirlos con mayor facilidad.<br><br>
 
 #### Diagrama explicativo de las dependencias entre scripts 🛣️ :
 
@@ -190,15 +190,15 @@ _nota: más adelante en este documento se detallan todos los scripts._
 
 #### Explicación detallada de los directorios y sus scripts📂📋 :
 
-📂** commands **: Este es el directorio por defecto al que se van a buscar los ficheros .txt con comandos solicitados. Puede contener múltiples ejemplos y/o inputs.
+📂**commands**: Este es el directorio por defecto al que se van a buscar los ficheros .txt con comandos solicitados. Puede contener múltiples ejemplos y/o inputs.
 
-**Es importante ** saber que este directorio se puede cambiar como predeterminado, desde el script de configuración del proyecto, del cual se habla en la explicación detallada del directorio _utils_. Un ejemplo de implementación sería algo así :
+**Es importante** saber que este directorio se puede cambiar como predeterminado, desde el script de configuración del proyecto, del cual se habla en la explicación detallada del directorio _utils_. Un ejemplo de implementación sería algo así :
 
 ![](https://i.ibb.co/qF5R5JK/Screenshot-1.png)
 [Url imagen](https://i.ibb.co/qF5R5JK/Screenshot-1.png)
 _en donde cada .txt puede contener comandos válidos, inválidos, o mixtos. En todos, los casos el sistema es capaz de mantenerse robusto_.
 <br>
-📂** helpers **: Como se explicó, este directorio contiene expresiones regulares centralizadas en un script, que permiten validar la estructura básica de los comandos. Si conoces o no , de expresiones regulares, te recomiendo en ambos casos visitar [RegExr](https://regexr.com). Es un playground en el que podrás copiar y pegar los detalles de las expresiones regulares usadas en este proyecto y ver que tipo de inputs acepta y cuales no.
+📂**helpers**: Como se explicó, este directorio contiene expresiones regulares centralizadas en un script, que permiten validar la estructura básica de los comandos. Si conoces o no , de expresiones regulares, te recomiendo en ambos casos visitar [RegExr](https://regexr.com). Es un playground en el que podrás copiar y pegar los detalles de las expresiones regulares usadas en este proyecto y ver que tipo de inputs acepta y cuales no.
 
 En el script **validators.js** contenido aquí, te encontrarás lo siguiente:
 
@@ -231,8 +231,7 @@ Como te dije, puedes ir jugando y probando estas combinaciones en el playground 
 `Presence Marco 7 59:59 10:17 R100` : No hace match porque la hora de entrada no es válida.<br>
 `Presence Marco 7 08:06 10:17 100CJK` : No hace match porque el código de sala no sigue la nomenclatura.<br>
 
-** MIN_DIFF_TIME **: Tiempo mínimo de entrada vs salida (en milisegundos) para que una asistencia sea considerada.
-
+**MIN_DIFF_TIME**: Tiempo mínimo de entrada vs salida (en milisegundos) para que una asistencia sea considerada.
 **MILIS_TO_MINUTES** : Constante que indica el número a dividir para convertir de milisegundos a minutos.<br>
 **EXTRACT_MINUTES_FROM_STR**: Extraer minutos de un log ya procesado, para convertirlos y trabajar con ellos. Por ejemplo:
 
@@ -297,7 +296,8 @@ const readFile = async (file_name) => {
 ```
 
 <br>
-  - **fileFormatter.js**: Encargado de formatear el array de comandos en crudo generado por _fileReader.js_, haciendo el primer filtro base de formato, apoyado de _VALIDATORS_ y las regex especificadas con el formato de cada comando, devolviendo una lista de : comandos de tipo Student, comandos de tipo Presence y comandos de tipo Discarded agrupados en un objeto JSON. Su estructura es la siguiente: 
+
+- **fileFormatter.js**: Encargado de formatear el array de comandos en crudo generado por _fileReader.js_, haciendo el primer filtro base de formato, apoyado de _VALIDATORS_ y las regex especificadas con el formato de cada comando, devolviendo una lista de : comandos de tipo Student, comandos de tipo Presence y comandos de tipo Discarded agrupados en un objeto JSON. Su estructura es la siguiente: 
   
   ```javascript
   const getFile = async (filename) => {
@@ -317,8 +317,8 @@ const readFile = async (file_name) => {
   } catch (exception) {
     throw exception;
   }
-};
-```
+	};
+	```
 <br>
 
 ```javascript
@@ -365,6 +365,7 @@ const formatFile = async (raw_commands) => {
 ```
 
 <br>
+
 - **presenceValidator.js**: Encargado de tomar el primer array con los formatos y comandos saneados, para realizar las validaciones más complejas, asociadas con horas, comparaciones, inexistencia de Students registrados y la relación entre un comando Presence con un Student, para posteriormente generar el logger final de valor para el usuario, su estructura es la siguiente:
 
 ```javascript
@@ -419,8 +420,10 @@ const presence_validator = async (formatted_array) => {
 ```
 
 <br>
-  - **commandsCompiler.js**: El script mas complejo del proyecto. Su función es tomar un array procesado que contenga relaciones estudiante-asistencias, y realizar los cálculos correspondientes a la cantidad de minutos asistidos, verificar si los días de asistencias son diferentes, sortear el resultado en forma descendente, y establecer métodos para imprimir el procesado final por consola . Su estructura es la siguiente: <br><br>
- ```javascript
+
+- **commandsCompiler.js**: El script mas complejo del proyecto. Su función es tomar un array procesado que contenga relaciones estudiante-asistencias, y realizar los cálculos correspondientes a la cantidad de minutos asistidos, verificar si los días de asistencias son diferentes, sortear el resultado en forma descendente, y establecer métodos para imprimir el procesado final por consola . Su estructura es la siguiente: <br><br>
+
+```javascript
  // Recibe una instancia unica de presencia, y calcula los dias diferentes de asistencia y los minutos asistidos
 const calculateDays = (student_presence, different_days) => {
   let { day, enter_hour, left_hour } = student_presence;
@@ -432,9 +435,10 @@ const calculateDays = (student_presence, different_days) => {
     VALIDATORS.MILIS_TO_MINUTES;
   return minutes_presence;
 };
-   ```
+```
    <br>
-   ```javascript 
+   
+```javascript 
    // El resultado final es un string informativo por lo que para sortearlo en orden descendente es necesario separar los minutos del string crudo para hacer la comparación final
    const extractRawMinutes = (presence_string) => {
    // Regex de VALIDATORS
@@ -444,9 +448,9 @@ const calculateDays = (student_presence, different_days) => {
   const minutes_formatted = parseInt(minutes_raw[0]);
   return minutes_formatted;
 };
-   ```
+```
    <br><br>
-   ```javascript
+```javascript
    // Recibimos los estudiantes con sus presencias asociadas y comandos descartados 
    const compileCommands = async ({ students_presence, discarded }) => {
   try {
@@ -489,7 +493,7 @@ const calculateDays = (student_presence, different_days) => {
     throw exception;
   }
 };
-   ```
+```
 <br><br/>
 
 ```javascript
@@ -560,6 +564,7 @@ const ERROR_DICTIONARY = {
     "\n\n ==================== COMMANDS RESULTS =======================",
 };
 ```
+<br>
 
 en donde :<br>
 `EXT_NOT_ALLOWED` : Informa al usuario que la extensión del archivo solicitado no está permitida. <br>
@@ -576,60 +581,73 @@ en donde :<br>
 
 **test📂**: Contiene los tests realizados a cada parte del proyecto, siendo estos un total de 31 tests realizados, separados por categoría, la estructura es la siguiente :
 
-- **Compiler/commandsCompiler.js** :<br>
-  Contiene tests para validar 5 casos de usos complejos:<br>
-  **Test 1**: Verifica si el sistema cuenta correctamente los días en que un estudiante asistió al menos dos veces en un periodo.
-  **Test 2**: Comprueba si el sistema calcula correctamente la duración total de la presencia del estudiante en un periodo específico.
-  **Test 3**: Evalúa si el sistema suma correctamente la duración total de la asistencia y el número de días en que se registró la asistencia.
-  **Test 4**: Asegura que el sistema maneje correctamente un archivo vacío, devolviendo resultados vacíos.
-  **Test 5**: Verifica si el sistema ordena correctamente a los estudiantes según su tiempo de presencia, independientemente del orden inicial de los datos.
+- **Compiler/commandsCompiler.js⚙️** :
+<br>
 
-_Resultado final : 5/5 tests pasados._ <br><br>
+  - Contiene tests para validar 5 casos de usos complejos:
+  
+  - **Test 1**: Verifica si el sistema cuenta correctamente los días en que un estudiante asistió al menos dos veces en un periodo.
+  - **Test 2**: Comprueba si el sistema calcula correctamente la duración total de la presencia del estudiante en un periodo específico.
+  - **Test 3**: Evalúa si el sistema suma correctamente la duración total de la asistencia y el número de días en que se registró la asistencia.
+  - **Test 4**: Asegura que el sistema maneje correctamente un archivo vacío, devolviendo resultados vacíos.
+  - **Test 5**: Verifica si el sistema ordena correctamente a los estudiantes según su tiempo de presencia, independientemente del orden inicial de los datos.
 
-- **files/fileHandler.js** :<br>
-  Contiene tests para validar 4 casos de usos comunes:<br>
-  **Test 1**: Verifica si al intentar leer un archivo que no existe en el directorio de comandos, se devuelve una excepción con el error "FILE_NOT_FOUND" del diccionario de errores.
-  **Test 2**: Comprueba que al intentar obtener un archivo con un nombre no proporcionado, se devuelve una excepción con el error "FILENAME_NOT_PROVIDED" del diccionario de errores..
-  **Test 3**: Evalúa si al intentar obtener un archivo con una extensión no permitida, se devuelve una excepción con el error "EXT_NOT_ALLOWED" del diccionario de errores.
-  **Test 4**: Verifica que al intentar leer un archivo que existe en el directorio de comandos, la ejecución continúa sin lanzar excepciones y devuelve un objeto tipo array vacío.
+_Resultado final✅ : 5/5 tests pasados._ <br><br>
 
-_Resultado final : 4/4 tests pasados._ <br><br>
+- **files/fileHandler.js📂🔍** :
+<br>
 
-- **validations/commandsStructure.js** :<br>
-  Contiene tests para validar 15 casos de usos asociados al formato de cada comando:<br>
+
+  - Contiene tests para validar 4 casos de usos comunes:
+    
+  - **Test 1**: Verifica si al intentar leer un archivo que no existe en el directorio de comandos, se devuelve una excepción con el error "FILE_NOT_FOUND" del diccionario de 
+  errores.
+  - **Test 2**: Comprueba que al intentar obtener un archivo con un nombre no proporcionado, se devuelve una excepción con el error "FILENAME_NOT_PROVIDED" del diccionario de errores..
+  - **Test 3**: Evalúa si al intentar obtener un archivo con una extensión no permitida, se devuelve una excepción con el error "EXT_NOT_ALLOWED" del diccionario de errores.
+  - **Test 4**: Verifica que al intentar leer un archivo que existe en el directorio de comandos, la ejecución continúa sin lanzar excepciones y devuelve un objeto tipo array vacío.
+
+_Resultado final✅ : 4/4 tests pasados._ <br><br>
+
+- **validations/commandsStructure.js🏛️** :
+  <br>
+  
+  - Contiene tests para validar 15 casos de usos asociados al formato de cada comando:
+  <br>
+  
   **Para el Comando de Estudiante**:
+- **Test 1:** Verifica si el sistema reconoce correctamente una estructura de comando inesperada o inválida.
+- **Test 2:** Comprueba si el sistema detecta correctamente la ausencia del campo "name_student".
+- **Test 3:** Evalúa si el sistema acepta correctamente la estructura esperada del comando.
+- **Test 4:** Verifica si el sistema detecta correctamente el exceso de indentación al inicio y al final de la cadena.
+- **Test 5:** Comprueba si el sistema detecta correctamente el exceso de indentación entre la palabra clave "Student" y el nombre del estudiante.
+- **Test 6:** Evalúa si el sistema detecta correctamente la sensibilidad a mayúsculas y minúsculas en la palabra clave "Student".
 
-**Test 1: **Verifica si el sistema reconoce correctamente una estructura de comando inesperada o inválida.
-**Test 2: **Comprueba si el sistema detecta correctamente la ausencia del campo "name_student".
-**Test 3:** Evalúa si el sistema acepta correctamente la estructura esperada del comando.
-**Test 4: **Verifica si el sistema detecta correctamente el exceso de indentación al inicio y al final de la cadena.
-**Test 5:** Comprueba si el sistema detecta correctamente el exceso de indentación entre la palabra clave "Student" y el nombre del estudiante.
-**Test 6: **Evalúa si el sistema detecta correctamente la sensibilidad a mayúsculas y minúsculas en la palabra clave "Student".<br><br>
-**Para el Comando de Presencia:**
+<br><br>
+ **Para el Comando de Presencia:**
+- **Test 1:** Verifica si el sistema reconoce correctamente una estructura de comando inesperada o inválida.
+- **Test 2:** Comprueba si el sistema detecta correctamente la ausencia de algún campo requerido, en este caso, el nombre del estudiante.
+- **Test 3:** Evalúa si el sistema acepta correctamente la estructura esperada del comando.
+- **Test 4:** Verifica si el sistema detecta correctamente un día de la semana inválido.
+- **Test 5:** Comprueba si el sistema detecta correctamente un formato de hora no permitido para la hora de entrada.
+- **Test 6:** Evalúa si el sistema detecta correctamente un formato de hora no permitido para la hora de salida.
+- **Test 7:** Verifica si el sistema detecta correctamente un código de aula no válido.
+- **Test 8:** Comprueba si el sistema detecta correctamente el exceso de indentación al inicio y al final de la cadena.
+- **Test 9:** Evalúa si el sistema detecta correctamente el exceso de indentación entre la palabra clave "Presence" y los campos.
 
-**Test 1:** Verifica si el sistema reconoce correctamente una estructura de comando inesperada o inválida.
-**Test 2:** Comprueba si el sistema detecta correctamente la ausencia de algún campo requerido, en este caso, el nombre del estudiante.
-**Test 3:** Evalúa si el sistema acepta correctamente la estructura esperada del comando.
-**Test 4:** Verifica si el sistema detecta correctamente un día de la semana inválido.
-**Test 5: **Comprueba si el sistema detecta correctamente un formato de hora no permitido para la hora de entrada.
-**Test 6: **Evalúa si el sistema detecta correctamente un formato de hora no permitido para la hora de salida.
-**Test 7:** Verifica si el sistema detecta correctamente un código de aula no válido.
-**Test 8:** Comprueba si el sistema detecta correctamente el exceso de indentación al inicio y al final de la cadena.
-**Test 9:** Evalúa si el sistema detecta correctamente el exceso de indentación entre la palabra clave "Presence" y los campos.
+_Resultado final ✅: 15/15 tests pasados._ <br><br>
 
-_Resultado final : 15/15 tests pasados._ <br><br>
+- **validations/commandsValues.js 📄** :
+<br>
+Contiene tests para validar 7 casos de usos complejos asociados a los valores contenidos en cada comando:
 
-- **validations/commandsValues.js** :<br>
-  Contiene tests para validar 7 casos de usos complejos asociados a los valores contenidos en cada comando:<br>
-
-**Test 1: **Verifica la validez de varios formatos especiales del comando 'Student', incluyendo comandos con identación extra en las esquinas..
-**Test 2: **Evalúa cómo el sistema maneja la duplicación de valores en los comandos 'Student' y 'Presence', asegurando que se ignoren los duplicados..
-**Test 3:** Verifica si el sistema descarta correctamente comandos inválidos, incluyendo comandos con estructuras incorrectas y valores incorrectos.
-**Test 4: **Evalúa el comportamiento del sistema cuando se proporcionan tanto comandos válidos como inválidos, asegurando que los comandos válidos sean procesados correctamente y los inválidos sean descartados.
-**Test 5:** Verifica si el sistema devuelve un error adecuado cuando se intenta registrar la presencia de un estudiante que no ha sido registrado previamente.
-**Test 6: **Evalúa si el sistema devuelve un error cuando la diferencia entre la hora de entrada y salida en un comando de presencia es menor a 5 minutos.
-**Test 7: **Verifica si el sistema devuelve un error cuando la hora de entrada es mayor que la hora de salida en un comando de presencia.<br>
-_Resultado final : 7/7 tests pasados._ <br><br>
+- **Test 1:** Verifica la validez de varios formatos especiales del comando 'Student', incluyendo comandos con identación extra en las esquinas..
+- **Test 2:** Evalúa cómo el sistema maneja la duplicación de valores en los comandos 'Student' y 'Presence', asegurando que se ignoren los duplicados..
+- **Test 3:** Verifica si el sistema descarta correctamente comandos inválidos, incluyendo comandos con estructuras incorrectas y valores incorrectos.
+- **Test 4:** Evalúa el comportamiento del sistema cuando se proporcionan tanto comandos válidos como inválidos, asegurando que los comandos válidos sean procesados correctamente y los inválidos sean descartados.
+- **Test 5:** Verifica si el sistema devuelve un error adecuado cuando se intenta registrar la presencia de un estudiante que no ha sido registrado previamente.
+- **Test 6:** Evalúa si el sistema devuelve un error cuando la diferencia entre la hora de entrada y salida en un comando de presencia es menor a 5 minutos.
+- **Test 7:** Verifica si el sistema devuelve un error cuando la hora de entrada es mayor que la hora de salida en un comando de presencia.<br>
+_Resultado final✅ : 7/7 tests pasados._ <br><br>
 
 ### Levantando el proyecto 👩‍🚀🚀
 
@@ -642,16 +660,16 @@ Asegúrate de tener Node.js instalado en tu sistema. Puedes descargarlo desde [n
 
 ### Dependencias 📚⚙️
 
-[Chai](https://www.chaijs.com/): Biblioteca de aserciones para Node.js y navegadores.
-[Mocha](https://mochajs.org/):Framework de pruebas para Node.js.
-[Luxon](https://moment.github.io/luxon/#/?id=luxon): Biblioteca moderna de manipulación de fechas y horas para JavaScript.
+[Chai](https://www.chaijs.com/): Biblioteca de aserciones para Node.js y navegadores.<br>
+[Mocha](https://mochajs.org/):Framework de pruebas para Node.js.<br>
+[Luxon](https://moment.github.io/luxon/#/?id=luxon): Biblioteca moderna de manipulación de fechas y horas para JavaScript.<br>
 
 ### Ejecución y scripts asociados: 🏃‍♂️🏃
 
 - `node app.js tuFichero.txt`: Este comando iniciará el procesamiento del archivo que le indiques para finalmente imprimirlo por consola. Recuerda que el directorio por defecto está definido en _utils/config.js_<br><br>
 - `npm run test`: Este comando ejecutará todos los test asociados a todos los módulos del sistema.<br><br>
 - `npm run test_commands`: Este comando ejecutará todos los test asociados únicamente a el formato básico a cumplimentar de los comandos.<br><br>
-- `npm run "test_commands_values"`: Este comando ejecutará todos los test asociados únicamente a los valores a cumplimentar de los comandos y que estos sean íntegros.<br><br>
+- `npm run test_commands_values`: Este comando ejecutará todos los test asociados únicamente a los valores a cumplimentar de los comandos y que estos sean íntegros.<br><br>
 - ` npm run test_file_handler`: Este comando ejecutará todos los test asociados únicamente a el manejo de ficheros.<br><br>
 - `npm run test_commands_compiler`: Este comando ejecutará todos los test asociados únicamente a el procesamiento final de los comandos saneados.<br><br>
 
@@ -660,5 +678,5 @@ Asegúrate de tener Node.js instalado en tu sistema. Puedes descargarlo desde [n
 - 🌟 Diego Fábrega Elizalde
 - 📞 (9)90622898
 - `<Mi web>` : <https://www.dafe.pro>
-- 📩 contacto@dafe.pro
+- 📩 contacto@dafe.pro / dafepro2024@gmail.com
 - 📌 https://github.com/XP-Magician
