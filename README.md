@@ -514,3 +514,122 @@ showLogger = async () => {
   }
 };
 ```
+
+<br><br>
+
+**utils📂**: El directorio que contiene las constantes de configuración y diccionario de errores que se ha ido utilizando a lo largo de los orquestadores, su estructura es la siguiente :
+
+- **config.js**
+
+```javascript
+const config = {
+  COMMANDS_DIRECTORY: path.join("commands"),
+  ALLOWED_EXTENSIONS: [".txt"],
+  NEXT_LINE: os.EOL,
+  CHARSET: "utf8",
+};
+```
+
+en donde :<br>
+`COMMANDS_DIRECTORY` : Especifica el directorio por defecto donde se irán a buscar los ficheros especificados por el usuario, su relatividad parte del directorio raíz del proyecto. <br>
+`ALLOWED_EXTENSIONS`: Define las extensiones que se van a permitir al momento de leer un fichero, de momento solo se acepta .txt, pero es extensible a otros formatos si el proyecto crece.<br>
+`NEXT_LINE`: Especifica el tipo de salto de línea con el que se deberá separar la lectura del fichero, dependiendo del sistema operativo. <br>
+`CHARSET`: Define el charset con el que serán codificados los inputs recibidos. <br><br>
+
+- **errorsDictionary.js**
+
+```javascript
+const ERROR_DICTIONARY = {
+  EXT_NOT_ALLOWED:
+    "The extension of the file is not allowed, you must send an admitted file.",
+  FILENAME_NOT_PROVIDED: "You didn't provide the filename to work on.",
+  FILE_NOT_FOUND: "The file doesn't exist in the current commands directory.",
+  STUDENT_NOT_REGISTERED:
+    "The presence must have a registered student with 'Student' command before. ",
+  DIFF_NOT_ENOUGH:
+    "The presence isn't valid because it's fewer than five minutes.",
+  ENTER_GREATHER_THAN_LEFT:
+    "The presence isn't valid because the enter time is greather than the left time.",
+  INVALID_COMMAND_FORMAT:
+    "The command don't have a valid format, check your entries carefully.",
+  INDICATOR_STRING: "     -----------> Reason: ",
+  DISCARDED_COMMAND_SEPARATOR:
+    "\n\n ==================== DISCARDED COMMANDS =======================",
+  NO_DISCARDED_COMMANDS: "No discarded commands\n\n ",
+  MINUTES_DISPLAY:
+    "\n\n ==================== COMMANDS RESULTS =======================",
+};
+```
+
+en donde :<br>
+`EXT_NOT_ALLOWED` : Informa al usuario que la extensión del archivo solicitado no está permitida. <br>
+`FILENAME_NOT_PROVIDED`: Informa al usuario que no proporcionó ningun nombre de fichero a analizar.<br>
+`FILE_NOT_FOUND`: Informa al usuario que el archivo solicitado no se encontró en el directorio commands establecido. <br>
+`STUDENT_NOT_REGISTERED`: Indica al usuario que intentó ingresar una presencia, sin antes haber registrado al estudiante. <br>
+`DIFF_NOT_ENOUGH`: Indica que la presencia fue menor a 5 minutos, por lo que fue ignorada. <br>
+`ENTER_GREATER_THAN_LEFT`: Indica que el tiempo de entrada de la presencia es mayor al de salida, por lo que el comando no es valido. <br>
+`INVALID_COMMAND_FORMAT`:Indica que el comando no cumple la estructura solicitada en general. <br>
+`INDICATOR_STRING`: Cadena de texto que apoya una visualizacion mas amigable de los datos impresos en consola. <br>
+`DISCARDED_COMMAND_SEPARATOR`: Título para indicar que los registros siguientes en la consola corresponden a los comandos descartados. <br>
+`NO_DISCARDED_COMMANDS`: Texto que indica que no se descartaron comandos en el análisis. <br>
+`MINUTES_DISPLAY`: Titulo para indicar que los registros siguientes en la consola corresponden a los registros válidos y procesados. <br><br>
+
+**test📂**: Contiene los tests realizados a cada parte del proyecto, siendo estos un total de 31 tests realizados, separados por categoría, la estructura es la siguiente :
+
+- **Compiler/commandsCompiler.js** :<br>
+  Contiene tests para validar 5 casos de usos complejos:<br>
+  **Test 1**: Verifica si el sistema cuenta correctamente los días en que un estudiante asistió al menos dos veces en un periodo.
+  **Test 2**: Comprueba si el sistema calcula correctamente la duración total de la presencia del estudiante en un periodo específico.
+  **Test 3**: Evalúa si el sistema suma correctamente la duración total de la asistencia y el número de días en que se registró la asistencia.
+  **Test 4**: Asegura que el sistema maneje correctamente un archivo vacío, devolviendo resultados vacíos.
+  **Test 5**: Verifica si el sistema ordena correctamente a los estudiantes según su tiempo de presencia, independientemente del orden inicial de los datos.
+
+_Resultado final : 5/5 tests pasados._ <br><br>
+
+- **files/fileHandler.js** :<br>
+  Contiene tests para validar 4 casos de usos comunes:<br>
+  **Test 1**: Verifica si al intentar leer un archivo que no existe en el directorio de comandos, se devuelve una excepción con el error "FILE_NOT_FOUND" del diccionario de errores.
+  **Test 2**: Comprueba que al intentar obtener un archivo con un nombre no proporcionado, se devuelve una excepción con el error "FILENAME_NOT_PROVIDED" del diccionario de errores..
+  **Test 3**: Evalúa si al intentar obtener un archivo con una extensión no permitida, se devuelve una excepción con el error "EXT_NOT_ALLOWED" del diccionario de errores.
+  **Test 4**: Verifica que al intentar leer un archivo que existe en el directorio de comandos, la ejecución continúa sin lanzar excepciones y devuelve un objeto tipo array vacío.
+
+_Resultado final : 4/4 tests pasados._ <br><br>
+
+- **validations/commandsStructure.js** :<br>
+  Contiene tests para validar 15 casos de usos asociados al formato de cada comando:<br>
+  **Para el Comando de Estudiante**:
+
+      **Test 1: **Verifica si el sistema reconoce correctamente una estructura de comando inesperada o inválida.
+
+  **Test 2: **Comprueba si el sistema detecta correctamente la ausencia del campo "name_student".
+  **Test 3:** Evalúa si el sistema acepta correctamente la estructura esperada del comando.
+  **Test 4: **Verifica si el sistema detecta correctamente el exceso de indentación al inicio y al final de la cadena.
+  **Test 5:** Comprueba si el sistema detecta correctamente el exceso de indentación entre la palabra clave "Student" y el nombre del estudiante.
+  **Test 6: **Evalúa si el sistema detecta correctamente la sensibilidad a mayúsculas y minúsculas en la palabra clave "Student".<br><br>
+  **Para el Comando de Presencia:**
+
+      **Test 1:** Verifica si el sistema reconoce correctamente una estructura de comando inesperada o inválida.
+
+  **Test 2:** Comprueba si el sistema detecta correctamente la ausencia de algún campo requerido, en este caso, el nombre del estudiante.
+  **Test 3:** Evalúa si el sistema acepta correctamente la estructura esperada del comando.
+  **Test 4:** Verifica si el sistema detecta correctamente un día de la semana inválido.
+  **Test 5: **Comprueba si el sistema detecta correctamente un formato de hora no permitido para la hora de entrada.
+  **Test 6: **Evalúa si el sistema detecta correctamente un formato de hora no permitido para la hora de salida.
+  **Test 7:** Verifica si el sistema detecta correctamente un código de aula no válido.
+  **Test 8:** Comprueba si el sistema detecta correctamente el exceso de indentación al inicio y al final de la cadena.
+  **Test 9:** Evalúa si el sistema detecta correctamente el exceso de indentación entre la palabra clave "Presence" y los campos.
+
+_Resultado final : 15/15 tests pasados._ <br><br>
+
+- **validations/commandsValues.js** :<br>
+  Contiene tests para validar 7 casos de usos complejos asociados a los valores contenidos en cada comando:<br>
+
+      **Test 1: **Verifica la validez de varios formatos especiales del comando 'Student', incluyendo comandos con identación extra en las esquinas..
+
+  **Test 2: **Evalúa cómo el sistema maneja la duplicación de valores en los comandos 'Student' y 'Presence', asegurando que se ignoren los duplicados..
+  **Test 3:** Verifica si el sistema descarta correctamente comandos inválidos, incluyendo comandos con estructuras incorrectas y valores incorrectos.
+  **Test 4: **Evalúa el comportamiento del sistema cuando se proporcionan tanto comandos válidos como inválidos, asegurando que los comandos válidos sean procesados correctamente y los inválidos sean descartados.
+  **Test 5:** Verifica si el sistema devuelve un error adecuado cuando se intenta registrar la presencia de un estudiante que no ha sido registrado previamente.
+  **Test 6: **Evalúa si el sistema devuelve un error cuando la diferencia entre la hora de entrada y salida en un comando de presencia es menor a 5 minutos.
+  **Test 7: **Verifica si el sistema devuelve un error cuando la hora de entrada es mayor que la hora de salida en un comando de presencia.<br>
+  _Resultado final : 7/7 tests pasados._ <br><br>
