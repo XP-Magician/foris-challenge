@@ -1,0 +1,10 @@
+Student Diego
+Student Maria
+Student Jose
+Hola comando malo
+Presence Marco 1 09:02 10:17 R100
+Presence Diego 3 10:58 12:05 R207
+Presence Diego 5 08:45 15:05 R207
+Presence Diego 7 11:30 12:33 R207
+Presence David 5 14:02 15:46 F505
+Presence Diego 5 16:00 15:46 F505

@@ -1,0 +1,10 @@
+Student Marco lksald
+Student David 
+Student Fran
+Presence Marco 1 09:02 10:17 R100
+Presence Marco 3 10:58 12:05 R205
+Presence David 5 14:02 15:46 F505
+Presence David 5 14:02 15:46 F505
+Presence David 5 14:02 15:46 F505
+Presence Fran 5 14:00 16:00 F505
+Presence Fran 5 18:00 16:00 F505
