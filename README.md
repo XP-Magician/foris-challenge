@@ -260,3 +260,257 @@ const VALIDATOR_PRESENCE_DETAILS = (
   return true;
 };
 ```
+
+<br>
+
+**tools📂**: El directorio orquestador de toda la lógica detrás del programa,
+a continuación se presentan los scripts contenidos en él, y la función que cumple cada uno de ellos :
+
+- **fileReader.js**: Encargado de leer un fichero con el nombre especificado en la entrada _argv_ de Node, se comunica con el fichero de configuración que contiene el directorio por defecto a donde se van a buscar los ficheros especificados, y también con el diccionario de errores, para proporcionar feedback amigable al usuario, su estructura es la siguiente:
+
+```javascript
+// Lectura asíncrona por lo demandante de la tarea
+const readFile = async (file_name) => {
+  try {
+    const file_extension = path.extname(file_name);
+    // Se consulta si la extension del fichero está en la lista de permitidos en CONFIG
+    if (CONFIG.ALLOWED_EXTENSIONS.includes(file_extension)) {
+      // Se lee el archivo según el directorio por defecto con el charset de     CONFIG
+      const commands_file = await fs.readFile(
+        path.join(CONFIG.COMMANDS_DIRECTORY, file_name),
+        CONFIG.CHARSET
+      );
+      // Se genera un array de comandos no procesados, usando como  separador cada salto de línea
+      const raw_array_commands = commands_file.split(CONFIG.NEXT_LINE);
+      return raw_array_commands;
+    } else {
+      // Si la extension no está permitida, se lanza el error EXT_NOT_ALLOWED del diccionario de errores
+      throw new Error(ERROR_DICTIONARY.EXT_NOT_ALLOWED);
+    }
+  } catch (exception) {
+    if (exception.message !== ERROR_DICTIONARY.EXT_NOT_ALLOWED)
+      // Si el archivo no se encuentra se lanza el error EXT_NOT_ALLOWED   de el diccionario de errores
+      throw new Error(ERROR_DICTIONARY.FILE_NOT_FOUND);
+    throw exception;
+  }
+};
+```
+
+<br>
+  - **fileFormatter.js**: Encargado de formatear el array de comandos en crudo generado por _fileReader.js_, haciendo el primer filtro base de formato, apoyado de _VALIDATORS_ y las regex especificadas con el formato de cada comando, devolviendo una lista de : comandos de tipo Student, comandos de tipo Presence y comandos de tipo Discarded agrupados en un objeto JSON. Su estructura es la siguiente: 
+  
+  ```javascript
+  const getFile = async (filename) => {
+  try {
+  // Método auxiliar para recuperar un archivo con readFile.js ,entregando el nombre del fichero solicitado y manejando posibles excepciones asociadas.
+    if (filename === undefined)
+	 // Si el nombre de fichero no se entrega se lanza un error del tipo FILENAME_NOT_PROVIDED del diccionario de errores.
+      throw new Error(ERROR_DICTIONARY.FILENAME_NOT_PROVIDED);
+    const raw_array_commands = await readFile(filename);
+	// Agrega un filtro adicional para eliminar registros vacíos y entregar un array mas limpio al formateador
+    const raw_commands_filter = raw_array_commands.filter(
+      (raw_command) => raw_command.trim() !== ""
+    );
+	// Se apoya en formatFile (explicación siguiente) y devuelve su resultado
+    const formatted_commands = await formatFile(raw_commands_filter);
+    return formatted_commands;
+  } catch (exception) {
+    throw exception;
+  }
+};
+```
+<br>
+
+```javascript
+// Recibe un formato de array en crudo, con comandos mixtos, invalidos, o validos, y los maneja de acuerdo a las validaciones de las regex, apoyandose en VALIDATORS
+const formatFile = async (raw_commands) => {
+  try {
+    // Student,Presence y Discarded son los tipos de formato a generar
+    let formatted_commands = {
+      Student: [],
+      Presence: [],
+      Discarded: [],
+    };
+    raw_commands.forEach((raw_command) => {
+      let raw_command_trim = raw_command.trimEnd().trimStart();
+      switch (true) {
+        // Si es un comando del tipo Student y además no está previamente ingresado (manejar duplicidad) sin lanzar excepciones, sino que simplemente ignorando el registro
+        case VALIDATORS.STUDENT_COMMAND.test(raw_command_trim):
+          if (!formatted_commands.Student.includes(raw_command_trim))
+            formatted_commands.Student.push(raw_command_trim);
+          break;
+
+        // La misma lógica anterior, si es un comando del tipo Presence
+        case VALIDATORS.PRESENCE_COMMAND.test(raw_command_trim):
+          if (!formatted_commands.Presence.includes(raw_command_trim))
+            formatted_commands.Presence.push(raw_command_trim);
+          break;
+
+        // Si no cumple ningun formato anterior, es un comando inválido, se descarta, y se concatena, el comando + un separador definido en el diccionario para visualizar errores + el error del diccionario INVALID_COMMAND_FORMAT
+        default:
+          formatted_commands.Discarded.push(
+            raw_command +
+              ERROR_DICTIONARY.INDICATOR_STRING +
+              ERROR_DICTIONARY.INVALID_COMMAND_FORMAT
+          );
+          break;
+      }
+    });
+    // Se retornan los comandos saneados de la primera fase de validacion
+    return formatted_commands;
+  } catch (exception) {
+    throw exception;
+  }
+};
+```
+
+<br>
+- **presenceValidator.js**: Encargado de tomar el primer array con los formatos y comandos saneados, para realizar las validaciones más complejas, asociadas con horas, comparaciones, inexistencia de Students registrados y la relación entre un comando Presence con un Student, para posteriormente generar el logger final de valor para el usuario, su estructura es la siguiente:
+
+```javascript
+// Recibe el array saneado con formatFile.js
+const presence_validator = async (formatted_array) => {
+  try {
+    // Se inicializa la relacion que tendrán los estudiantes con presencias
+    let students_presence = {};
+    let discarded = formatted_array.Discarded;
+    // Iteramos sobre cada estudiante creando una clave unica para cada    uno
+    formatted_array.Student.forEach((student) => {
+      // Eliminamos la palabra Student del comando para solo dejar la clave, puesto que ya sabemos que se trata de Students dada la semántica del array
+      let student_id = student.split(" ")[1];
+      students_presence[student_id] = [];
+    });
+
+    formatted_array.Presence.forEach((presence) => {
+      let presence_details_raw = presence.split(" ");
+      // La misma operacion con presencias, la palabra Presence no se necesita
+      presence_details_raw.shift();
+      /* Al hacer split del string tenemos algo como : ['Marco','1','09:02','10:17', 'R100'] de forma segura, ya que previamente se saneó el array de comandos inválidos en cuanto al formato*/
+      let presence_details = {
+        student_id: presence_details_raw[0],
+        day: parseInt(presence_details_raw[1]),
+        enter_hour: presence_details_raw[2],
+        left_hour: presence_details_raw[3],
+        room: presence_details_raw[4],
+      };
+
+      // Analiza la presencia apoyandose en VALIDATOR_PRESENCE_DETAILS del directorio helpers, para realizar las validaciones complejas de : hora de entrada siempre mayor a hora de salida, si el estudiante no se registró previamente con Student es descartado, si la presencia fue menor a 5 minutos es descartada.
+      const result_validation_presence = VALIDATOR_PRESENCE_DETAILS(
+        students_presence,
+        presence_details
+      );
+      if (result_validation_presence === true) {
+        students_presence[presence_details.student_id].push(presence_details);
+      } else {
+        discarded.push(
+          presence +
+            ERROR_DICTIONARY.INDICATOR_STRING +
+            result_validation_presence
+        );
+      }
+    });
+
+    // Finalmente es devuelto un array completamente saneado que contiene una relacion clave-valor entre estudiantes y sus asistencias, y un array informativo con todos los comandos descartados y su explicación.
+    return { students_presence, discarded };
+  } catch (exception) {
+    throw exception;
+  }
+};
+```
+
+<br>
+  - **commandsCompiler.js**: El script mas complejo del proyecto. Su función es tomar un array procesado que contenga relaciones estudiante-asistencias, y realizar los cálculos correspondientes a la cantidad de minutos asistidos, verificar si los días de asistencias son diferentes, sortear el resultado en forma descendente, y establecer métodos para imprimir el procesado final por consola . Su estructura es la siguiente: <br><br>
+ ```javascript
+ // Recibe una instancia unica de presencia, y calcula los dias diferentes de asistencia y los minutos asistidos
+const calculateDays = (student_presence, different_days) => {
+  let { day, enter_hour, left_hour } = student_presence;
+  if (!different_days.includes(day)) different_days.push(day);
+  enter_hour = DateTime.fromISO(enter_hour);
+  left_hour = DateTime.fromISO(left_hour);
+  const minutes_presence =
+    (left_hour.toMillis() - enter_hour.toMillis()) /
+    VALIDATORS.MILIS_TO_MINUTES;
+  return minutes_presence;
+};
+   ```
+   <br>
+   ```javascript 
+   // El resultado final es un string informativo por lo que para sortearlo en orden descendente es necesario separar los minutos del string crudo para hacer la comparación final
+   const extractRawMinutes = (presence_string) => {
+   // Regex de VALIDATORS
+  const minutes_raw =
+    VALIDATORS.EXTRACT_MINUTES_FROM_STR.exec(presence_string)[0].split(" "); 
+	// Se seleccionan solo los minutos , mas no la palabra literal "Minutes"
+  const minutes_formatted = parseInt(minutes_raw[0]);
+  return minutes_formatted;
+};
+   ```
+   <br><br>
+   ```javascript
+   // Recibimos los estudiantes con sus presencias asociadas y comandos descartados 
+   const compileCommands = async ({ students_presence, discarded }) => {
+  try {
+  // Presencias procesadas son strings finales que informan 
+    let processed_presences = [];
+    Object.keys(students_presence).forEach((student_id) => {
+      switch (true) {
+	  // Si la key de un estudiante no tiene presencias, simplemente se queda en cero minutos
+        case students_presence[student_id].length === 0:
+          processed_presences.push(`${student_id}: 0 minutes`);
+          break;
+		  //Caso contrario se recorren todas las presencias asociadas al estudiante y se suman la cantidad de minutos, y dias diferentes, apoyandose en la funcion auxiliar calculateDays( ) explicada previamente
+        default:
+          let different_days = [];
+          let minutes_presence = 0;
+          let student_presences = students_presence[student_id];
+          student_presences.forEach((presence) => {
+            minutes_presence += calculateDays(
+              presence,
+              different_days,
+              minutes_presence
+            );
+          });
+          let day_text = different_days.length > 1 ? "days" : "day";
+          processed_presences.push(
+            `${student_id}: ${minutes_presence} minutes in ${different_days.length} ${day_text}`
+          );
+          break;
+      }
+    });
+	// Una vez el array es completado, se sortea en orden descendente apoyandose en la funcion auxiliar extractRawMinutes explicada previamente
+    processed_presences.sort((presence_string1, presence_string2) => {
+      const minutes_presence1 = extractRawMinutes(presence_string1);
+      const minutes_presence2 = extractRawMinutes(presence_string2);
+      return minutes_presence2 - minutes_presence1;
+    });
+	// Finalmente se retornan las presencias sorteadas y procesadas, y los comandos descartados finales para ser mostrados al usuario.
+    return { processed_presences, discarded };
+  } catch (exception) {
+    throw exception;
+  }
+};
+   ```
+<br><br/>
+
+```javascript
+// Funcion auxiliar que muestra el output final procesado en la CLI
+showLogger = async () => {
+  try {
+    const formatted_presences = await presenceValidator();
+    const { processed_presences, discarded } = await compileCommands(
+      formatted_presences
+    );
+    // Funciones y constantes de texto para mejor organizacion con títulos
+    console.log(ERROR_DICTIONARY.MINUTES_DISPLAY);
+    processed_presences.forEach((presence) => console.log(presence));
+    console.log(ERROR_DICTIONARY.DISCARDED_COMMAND_SEPARATOR);
+    console.log(
+      discarded.length === 0
+        ? ERROR_DICTIONARY.NO_DISCARDED_COMMANDS
+        : discarded
+    );
+  } catch (exception) {
+    console.log(exception.message);
+  }
+};
+```
