@@ -1,7 +1,7 @@
 // This define a list of students wich are involved into a single .txt commands file
 
-class Students {
-  constructor() {
-    this.students_list = [];
+export class Students {
+  constructor(student_id) {
+    this.student_id = student_id;
   }
 }
