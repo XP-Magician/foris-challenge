@@ -22,20 +22,19 @@ export const groupByRoom = async () => {
   // In order to group by room we need the Room ID into a new JSON object
   const room_presences = {};
   presences.forEach((presence_entity) => {
-    if (room_presences[presence_entity.room] === undefined)
+    if (room_presences[presence_entity.room] === undefined) {
       room_presences[presence_entity.room] = {};
-    // Now we add each Student ID to group their presences in that specific Room
-    students.forEach((student) => {
-      room_presences[presence_entity.room][student.student_id] = [];
-    });
-
+      // Now we add each Student ID to group their presences in that specific Room
+      students.forEach((student) => {
+        room_presences[presence_entity.room][student.student_id] = [];
+      });
+    }
     /* Finally we associate each Presence with their respective Student and Room ID, 
     taking advantage of the same loop for better performance */
     room_presences[presence_entity.room][presence_entity.student_id].push(
       presence_entity
     );
   });
-
   return { room_presences, discarded };
 };
 
