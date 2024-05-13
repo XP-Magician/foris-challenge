@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "chai": "^5.1.0",
+    "cli-colors": "^0.0.2",
     "luxon": "^3.4.4",
     "mocha": "^10.4.0"
   }
