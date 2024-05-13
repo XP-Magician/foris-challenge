@@ -25,7 +25,7 @@ export const commandsExtractor = async (raw_commands) => {
     let extracted_commands = {
       Student: [],
       Presence: [],
-      Clasroom: [],
+      Classroom: [],
       Discarded: [],
     };
     raw_commands.forEach((raw_command) => {
