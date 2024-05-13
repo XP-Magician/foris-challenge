@@ -1,4 +1,5 @@
 import entitites_constructed from "./entitiesConstructor.js";
+import { Travel } from "../entities/Travel.js";
 
 export const groupByStudent = async () => {
   const { students, presences, discarded } = await entitites_constructed();
@@ -36,4 +37,28 @@ export const groupByRoom = async () => {
   });
 
   return { room_presences, discarded };
+};
+
+export const groupByTravel = async () => {
+  const { students, presences, discarded } = await entitites_constructed();
+  // In order to group by travels and days we need the Student ID , days and Rooms within a JSON Object
+  const travels_student = {};
+  students.forEach((student) => (travels_student[student.student_id] = {}));
+  presences.forEach((presence_entity) => {
+    // We add each Student presence days in the Student ID position
+    if (travels_student[presence_entity.student_id]["Travels"] == undefined) {
+      travels_student[presence_entity.student_id]["Travels"] = [];
+    }
+
+    // Here we construct the Travel entity for working on it later in the compiler
+    travels_student[presence_entity.student_id]["Travels"].push(
+      new Travel(
+        presence_entity.room,
+        presence_entity.enter_hour,
+        presence_entity.day
+      ).getTravel()
+    );
+  });
+
+  return { travels_student, discarded };
 };
