@@ -25,6 +25,7 @@ export const commandsExtractor = async (raw_commands) => {
     let extracted_commands = {
       Student: [],
       Presence: [],
+      Clasroom: [],
       Discarded: [],
     };
     raw_commands.forEach((raw_command) => {
@@ -40,6 +41,12 @@ export const commandsExtractor = async (raw_commands) => {
         case VALIDATORS.PRESENCE_COMMAND.test(raw_command_trim):
           if (!extracted_commands.Presence.includes(raw_command_trim))
             extracted_commands.Presence.push(raw_command_trim);
+          break;
+
+        // It's a classroom type comamnd
+        case VALIDATORS.CLASSROOM_COMMAND.test(raw_command_trim):
+          if (!extracted_commands.Clasroom.includes(raw_command_trim))
+            extracted_commands.Clasroom.push(raw_command_trim);
           break;
 
         // It's an invalid input, goes to Discarded ones with the representative entity
