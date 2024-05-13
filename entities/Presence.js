@@ -33,13 +33,20 @@ export class Presence {
     };
   }
 
-  isValidPresence(list_students) {
+  isValidPresence(list_students, list_classrooms) {
     const presence_to_verify = this.getPresence();
-    // Student was previously registered?
     let student_was_registered = false;
+    let classroom_was_registered = false;
     list_students.forEach((student_object) => {
+      // Student was previously registered?
       if (student_object.student_id === presence_to_verify.student_id) {
         student_was_registered = true;
+        return;
+      }
+    });
+    list_classrooms.forEach((classroom_object) => {
+      if (classroom_object.room_code === presence_to_verify.room) {
+        classroom_was_registered = true;
         return;
       }
     });
@@ -54,9 +61,11 @@ export class Presence {
     if (left_hour.toMillis() - enter_hour.toMillis() < VALIDATORS.MIN_DIFF_TIME)
       return ERROR_DICTIONARY.DIFF_NOT_ENOUGH;
 
-    // Last validation to check whether the student was registered or not
+    // Last validation to check whether the student and classroom details were registered or not
     return student_was_registered
-      ? true
+      ? classroom_was_registered
+        ? true
+        : ERROR_DICTIONARY.CLASSROM_DETAILS_NOT_PROVIDED
       : ERROR_DICTIONARY.STUDENT_NOT_REGISTERED;
   }
 }
