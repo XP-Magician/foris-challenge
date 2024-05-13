@@ -45,8 +45,8 @@ export const commandsExtractor = async (raw_commands) => {
 
         // It's a classroom type comamnd
         case VALIDATORS.CLASSROOM_COMMAND.test(raw_command_trim):
-          if (!extracted_commands.Clasroom.includes(raw_command_trim))
-            extracted_commands.Clasroom.push(raw_command_trim);
+          if (!extracted_commands.Classroom.includes(raw_command_trim))
+            extracted_commands.Classroom.push(raw_command_trim);
           break;
 
         // It's an invalid input, goes to Discarded ones with the representative entity
