@@ -50,7 +50,7 @@ export const getStudentGroupResult = async () => {
       genericStudentResult(student_all_presences, student)
     );
   });
-  return processed_presences;
+  return { processed_presences, discarded };
 };
 
 export const getRoomGroupResult = async (roomFilter = "all") => {
@@ -80,7 +80,7 @@ export const getRoomGroupResult = async (roomFilter = "all") => {
     processed_room_presences.push(room_processed_string);
   });
 
-  return processed_room_presences;
+  return { processed_room_presences, discarded };
 };
 
 export const getTravelsGroupResult = async () => {
@@ -123,5 +123,5 @@ export const getTravelsGroupResult = async () => {
     }
     travels_student_proccesed.push(travel_string);
   });
-  return travels_student_proccesed;
+  return { travels_student_proccesed, discarded };
 };
