@@ -11,12 +11,16 @@ const ERROR_DICTIONARY = {
     "The presence isn't valid because the enter time is greather than the left time.",
   INVALID_COMMAND_FORMAT:
     "The command don't have a valid format, check your entries carefully.",
-  INDICATOR_STRING: "     -----------> Reason: ",
+  REASON_STRING: "     -----------> Reason: ",
+  ARROW_STRING: " -> ",
+  COMMA_STRING: ", ",
   DISCARDED_COMMAND_SEPARATOR:
     "\n\n ==================== DISCARDED COMMANDS =======================",
   NO_DISCARDED_COMMANDS: "No discarded commands\n\n ",
-  MINUTES_DISPLAY:
-    "\n\n ==================== COMMANDS RESULTS =======================",
+  STUDENTS_GROUP_RESULT:
+    "\n\n ==================== COMMANDS GROUPED BY STUDENTS RESULTS =======================",
+  ROOMS_GROUP_RESULT:
+    "\n\n ==================== COMMANDS GROUPED BY ROOMS RESULTS =======================",
 };
 
 export default ERROR_DICTIONARY;
