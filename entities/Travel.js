@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 export class Travel {
   constructor(room, enter_hour, day) {
     this.room = room;
-    this.enter_hour = DateTime.fromISO(enter_hour);
+    this.enter_hour = DateTime.fromISO(enter_hour).toMillis();
     this.day = day;
   }
 
