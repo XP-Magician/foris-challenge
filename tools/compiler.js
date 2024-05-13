@@ -40,10 +40,14 @@ export const getStudentGroupResult = async () => {
   return processed_presences;
 };
 
-export const getRoomGroupResult = async () => {
-  const { room_presences, discarded } = await groupByRoom();
+export const getRoomGroupResult = async (roomFilter = "all") => {
+  let { room_presences, discarded } = await groupByRoom();
   const processed_room_presences = []; // It's going to contain something like : [R100: 'David: 104 minutes in 1 day',...]
-
+  room_presences =
+    roomFilter === "all"
+      ? room_presences
+      : { [roomFilter]: room_presences[roomFilter] };
+  if (roomFilter !== "all" && !room_presences[roomFilter]) return [];
   // Get each individual room
   const individual_room_presences = Object.keys(room_presences);
   individual_room_presences.forEach((room) => {
