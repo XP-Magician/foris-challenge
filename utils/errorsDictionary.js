@@ -11,6 +11,8 @@ const ERROR_DICTIONARY = {
     "The presence isn't valid because the enter time is greather than the left time.",
   INVALID_COMMAND_FORMAT:
     "The command don't have a valid format, check your entries carefully.",
+  CLASSROM_DETAILS_NOT_PROVIDED:
+    "The classroom code in the presence doesn't have the details registered with Classroom command previously",
   REASON_STRING: "     -----------> Reason: ",
   ARROW_STRING: " -> ",
   COMMA_STRING: ", ",
