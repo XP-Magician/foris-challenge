@@ -25,12 +25,25 @@ const genericStudentResult = (student_presences, student_id) => {
   }
 };
 
-export const getStudentGroupResult = async () => {
-  const { student_presences, discarded } = await groupByStudent();
-  const processed_presences = []; // It's going to contain something like : ['David: 104 minutes in 1 day',...]
+// Reusable method for sorting a student list by presence minutes purposes
+const sortListByMinutes = (student_presences) => {
+  return Object.keys(student_presences).sort((st1, st2) => {
+    const st1_array = student_presences[st1];
+    const st2_array = student_presences[st2];
+    // prettier-ignore
+    const minutes_acc_1 = st1_array.reduce((minutes,presence)=>(minutes+presence.minutes),0);
+    // prettier-ignore
+    const minutes_acc_2 = st2_array.reduce((minutes,presence)=>(minutes+presence.minutes),0);
+    return minutes_acc_2 - minutes_acc_1;
+  });
+};
 
+export const getStudentGroupResult = async () => {
+  let { student_presences, discarded } = await groupByStudent();
+  // Sort from greather to fewer
+  const individual_student_presences = sortListByMinutes(student_presences);
+  const processed_presences = []; // It's going to contain something like : ['David: 104 minutes in 1 day',...]
   // Make the necessary final calculations
-  const individual_student_presences = Object.keys(student_presences);
   individual_student_presences.forEach((student) => {
     const student_all_presences = student_presences[student];
     processed_presences.push(
@@ -53,7 +66,7 @@ export const getRoomGroupResult = async (roomFilter = "all") => {
   individual_room_presences.forEach((room) => {
     let room_processed_string = `${room} :${config.NEXT_LINE}  `;
     // Get each Student presence in a single room
-    const student_pressences_by_room = Object.keys(room_presences[room]);
+    const student_pressences_by_room = sortListByMinutes(room_presences[room]);
     student_pressences_by_room.forEach((student_presence) => {
       const all_student_presences = room_presences[room][student_presence];
       // Calculate every student presence time according to the room provided
