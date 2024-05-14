@@ -13,16 +13,12 @@ const ERROR_DICTIONARY = {
     "The command don't have a valid format, check your entries carefully.",
   CLASSROM_DETAILS_NOT_PROVIDED:
     "The classroom code in the presence doesn't have the details registered with Classroom command previously",
-  REASON_STRING: "     -----------> Reason: ",
   ARROW_STRING: " -> ",
   COMMA_STRING: ", ",
-  DISCARDED_COMMAND_SEPARATOR:
-    "\n\n ==================== DISCARDED COMMANDS =======================",
-  NO_DISCARDED_COMMANDS: "No discarded commands\n\n ",
-  STUDENTS_GROUP_RESULT:
-    "\n\n ==================== COMMANDS GROUPED BY STUDENTS RESULTS =======================",
-  ROOMS_GROUP_RESULT:
-    "\n\n ==================== COMMANDS GROUPED BY ROOMS RESULTS =======================",
+  DISCARDED_COMMAND_SEPARATOR: "DISCARDED COMMANDS",
+  NO_DISCARDED_COMMANDS: "NO DISCARDED COMMANDS",
+  STUDENTS_GROUP_RESULT: "COMMANDS GROUPED BY STUDENTS RESULTS",
+  ROOMS_GROUP_RESULT: "COMMANDS GROUPED BY ROOMS RESULTS",
 };
 
 export default ERROR_DICTIONARY;
