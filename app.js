@@ -2,6 +2,7 @@ import {
   getStudentGroupResult,
   getRoomGroupResult,
   getTravelsGroupResult,
+  getRoomNameResult,
 } from "./tools/compiler.js";
 import print from "./utils/logger.js";
 import ERROR_DICTIONARY from "./utils/errorsDictionary.js";
@@ -9,9 +10,10 @@ import ERROR_DICTIONARY from "./utils/errorsDictionary.js";
 // Must recibe a node param with the name of the file , for example : node app.js "myfile.txt" , you can change the default location to
 // search the file in utils/config : COMMANDS_DIRECTORY constant.
 const initialize = async () => {
-  await print_presences_by_student();
   await print_presences_by_room();
   await print_travels_student();
+  await print_filtered_roomname("LAB4");
+  await print_presences_by_student();
   await print_discarded();
 };
 
@@ -33,10 +35,17 @@ const print_travels_student = async () => {
   print_processed(travels_student_proccesed,ERROR_DICTIONARY.TRAVELS_GROUP_RESULT);
 };
 
+const print_filtered_roomname = async (roomname) => {
+  const { processed_presences } = await getRoomNameResult(roomname);
+  print_processed(processed_presences, ERROR_DICTIONARY.PRESENCES_BY_ROOMNAME);
+};
+
 /************ UTILS *************/
 const print_processed = (processed, title) => {
   print(title, "INFO_TITLE");
-  processed.forEach((stp) => print(`${stp}`, "TEXT"));
+  processed.length === 0
+    ? print("NO RESULTS", "INDICATOR")
+    : processed.forEach((stp) => print(`${stp}`, "TEXT"));
 };
 
 const print_discarded = async () => {
