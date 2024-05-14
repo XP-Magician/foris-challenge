@@ -1,5 +1,5 @@
 import { expect, assert } from "chai";
-import { getFile } from "../../tools/fileFormatter.js";
+import { getFile } from "../../tools/commandsExtractor.js";
 import readFile from "../../tools/fileReader.js";
 import ERROR_DICTIONARY from "../../utils/errorsDictionary.js";
 

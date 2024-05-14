@@ -1,8 +1,8 @@
 // TEST FOR VALIDATING THE VALUES PASSED THROUGH A COMMAND , IT EXECUTES AFTER BASIC REGEX VALIDATORS  AS A SECOND LAYER (commandStructure.js tests)
 
 import { expect } from "chai";
-import { formatFile } from "../../tools/fileFormatter.js";
-import { VALIDATOR_PRESENCE_DETAILS } from "../../helpers/validators.js";
+import { commandsExtractor } from "../../tools/commandsExtractor.js";
+import { Presence } from "../../entities/Presence.js";
 import ERROR_DICTIONARY from "../../utils/errorsDictionary.js";
 
 describe("Allow special format use cases with Student and Presence commands", () => {
@@ -14,7 +14,7 @@ describe("Allow special format use cases with Student and Presence commands", ()
       "  Student elena",
       "Student pedro  ",
     ];
-    const { Student, ...presences_and_discarded } = await formatFile(
+    const { Student, ...presences_and_discarded } = await commandsExtractor(
       extra_idented_commands
     );
     // All comands are valid
@@ -31,7 +31,7 @@ describe("Ignore duplicated values in Student and Presence commands", () => {
       "Presence Diego 3 10:58 12:05 R205",
       "  Presence Diego 3 10:58 12:05 R205 ",
     ];
-    const { Student, Presence, Discarded } = await formatFile(
+    const { Student, Presence, Discarded } = await commandsExtractor(
       duplicated_commands
     );
     // Should has one student and command because of the duplication
@@ -44,7 +44,9 @@ describe("Discard invalid commands typed", () => {
   it("Student diego abc , Presence 1 , abcabcabc: All of them are invalid, should return Discarded length array of 3", async () => {
     //this comes from fileReader in real environment , see test/file validations for more information
     const invalid_commands = ["Student diego abc", "Presence 1", "abcabcabc"];
-    const { Student, Presence, Discarded } = await formatFile(invalid_commands);
+    const { Student, Presence, Discarded } = await commandsExtractor(
+      invalid_commands
+    );
     // Should has 3 array length because all of them are invalid commands
     expect(Discarded.length).to.equal(3);
   });
@@ -63,7 +65,9 @@ describe("Real use case with multiple valid and invalid commands typed, should r
       "Presence Diego 3 10:58 12:05 R205",
       "Presence Diego 3 13:00 14:00 R500",
     ];
-    const { Student, Presence, Discarded } = await formatFile(mixed_commands);
+    const { Student, Presence, Discarded } = await commandsExtractor(
+      mixed_commands
+    );
     // Should has 1 valid student (ignore duplicated, discard wrong structure),Presence 2, discarded should has 4 commands
     expect(Discarded.length).to.equal(4);
     expect(Student.length).to.equal(1);
@@ -78,11 +82,16 @@ describe("Use case when the student name in Presence command wasn't registered p
       student_id: "Mariana",
       enter_hour: "10:00",
       left_hour: "15:00",
+      room: "R100",
+      day: 5,
     };
-    const validation_result = VALIDATOR_PRESENCE_DETAILS(
-      [],
-      presence_to_verify
-    );
+    const validation_result = new Presence(
+      presence_to_verify.room,
+      presence_to_verify.student_id,
+      presence_to_verify.enter_hour,
+      presence_to_verify.left_hour,
+      presence_to_verify.day
+    ).isValidPresence([], []);
     // Should got error because Student wasn't registered with Student command
     expect(validation_result).to.equal(ERROR_DICTIONARY.STUDENT_NOT_REGISTERED);
   });
@@ -97,11 +106,16 @@ describe("Use case when the enter hour value in Presence command, is greather th
       student_id: "Mariana",
       enter_hour: "10:00",
       left_hour: "08:00",
+      room: "R100",
+      day: 5,
     };
-    const validation_result = VALIDATOR_PRESENCE_DETAILS(
-      students,
-      presence_to_verify
-    );
+    const validation_result = new Presence(
+      presence_to_verify.room,
+      presence_to_verify.student_id,
+      presence_to_verify.enter_hour,
+      presence_to_verify.left_hour,
+      presence_to_verify.day
+    ).isValidPresence(students, []);
     // Should got error because enter hour is greater than left hour
     expect(validation_result).to.equal(
       ERROR_DICTIONARY.ENTER_GREATHER_THAN_LEFT
@@ -118,11 +132,16 @@ describe("Use case when the enter hour value difference with left hour in Presen
       student_id: "Mariana",
       enter_hour: "10:00",
       left_hour: "10:04",
+      room: "R100",
+      day: 5,
     };
-    const validation_result = VALIDATOR_PRESENCE_DETAILS(
-      students,
-      presence_to_verify
-    );
+    const validation_result = new Presence(
+      presence_to_verify.room,
+      presence_to_verify.student_id,
+      presence_to_verify.enter_hour,
+      presence_to_verify.left_hour,
+      presence_to_verify.day
+    ).isValidPresence(students, []);
     // Should got error because enter hour difference with left hour is fewer than 5 minutes
     expect(validation_result).to.equal(ERROR_DICTIONARY.DIFF_NOT_ENOUGH);
   });

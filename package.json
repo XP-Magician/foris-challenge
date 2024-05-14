@@ -8,8 +8,7 @@
     "test": "npx mocha test --recursive",
     "test_commands": "npx mocha test/validations/commandStructure.js",
     "test_commands_values": "npx mocha test/validations/commandValues.js",
-    "test_file_handler": "npx mocha test/files/fileHandler.js",
-    "test_commands_compiler": "npx mocha test/compiler/commandsCompiler.js"
+    "test_file_handler": "npx mocha test/files/fileHandler.js"
   },
   "keywords": [],
   "author": "",
