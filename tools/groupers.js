@@ -61,3 +61,30 @@ export const groupByTravel = async () => {
 
   return { travels_student, discarded };
 };
+
+export const filterByRoomName = async (roomname = "") => {
+  //prettier-ignore
+  let { students, presences, discarded, classrooms_details } = await entitites_constructed();
+  const student_presences = {}; // For later processment
+  // First we find the classroom that has the same name the user is looking for
+  let room_finded = classrooms_details.filter(
+    (cdt) => cdt.room_name.toLowerCase() == roomname.toLowerCase()
+  );
+  if (room_finded.length === 0) return { student_presences, discarded };
+
+  // If the roomname exists
+  students.forEach((student_entity) => {
+    if (student_presences[student_entity.student_id] === undefined)
+      student_presences[student_entity.student_id] = [];
+  });
+
+  // Now we need to associate each Presence to a single student and return the final association result
+  room_finded = room_finded.map((room) => room.room_code);
+  presences = presences.filter((presence) =>
+    room_finded.includes(presence.room)
+  );
+  presences.forEach((presence_entity) => {
+    student_presences[presence_entity.student_id].push(presence_entity);
+  });
+  return { student_presences, discarded };
+};
