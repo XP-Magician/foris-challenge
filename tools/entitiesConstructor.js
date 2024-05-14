@@ -69,7 +69,7 @@ export const presence_constructor = async (extracted_commands) => {
     });
 
     // These ones are going to be analized by a script in order to relationating students and presences
-    return { students, presences, discarded };
+    return { students, presences, classrooms_details, discarded };
   } catch (exception) {
     throw exception;
   }
