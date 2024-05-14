@@ -1,23 +1,17 @@
 Student Marco
 Student David
 Student Fran
-Classroom R205 LAB1 17.1 10.2 50000
-Classroom R100 LAB2 17.1 10.2
-Classroom F505 LAB2 17.1 10.2
-Classroom R600 LAB2 17.1 10.2
-Presence Marco 3 08:00 12:05 R205
-Presence Marco 3 13:00 14:05 R205
-Presence Marco 1 09:02 10:17 R100
-Presence Marco 1 08:00 09:00 R205
-Presence David 5 14:02 15:46 F505
+Classroom R205 LAB1 17.1 10.2
+Classroom R100 GIMNASIO 17.1 10.2
+Classroom F505 LAB4 17.1 10.2
+Classroom R600 LAB5 17.1 10.2
+Presence Marco 1 08:00 12:05 R205
+Presence Marco 2 13:00 14:05 R205
+Presence David 3 14:02 15:46 F505
 Presence David 5 16:02 18:46 R600
-Presence Marco 1 14:02 15:00 R600
-Presence David 1 16:02 17:46 R101
-Presence David 1 16:02 17:46 R101
+Presence David 1 16:02 17:46 R100
+Presence David 1 16:02 17:46 R100
 Presence Marcelo 1 16:02 17:46 R101
-Presence David 1 14:02 10:46 R101
-Presence David 9 14:02 10:46 R101
-Presence David 2 14:02 05:00 R101
 Presence Fran 1 00:00 15:00 R600
 Presence Fran 1 08:00 08:04 R600
 Hola comando malo
