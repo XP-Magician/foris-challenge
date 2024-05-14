@@ -1,4 +1,9 @@
-import { groupByStudent, groupByRoom, groupByTravel } from "./groupers.js";
+import {
+  groupByStudent,
+  groupByRoom,
+  groupByTravel,
+  filterByRoomName,
+} from "./groupers.js";
 import config from "../utils/config.js";
 import ERROR_DICTIONARY from "../utils/errorsDictionary.js";
 // Make a reusable method for calculating final minutes and days presences, no matter the group clause
@@ -124,4 +129,19 @@ export const getTravelsGroupResult = async () => {
     travels_student_proccesed.push(travel_string);
   });
   return { travels_student_proccesed, discarded };
+};
+
+export const getRoomNameResult = async (rooomname) => {
+  let { student_presences, discarded } = await filterByRoomName(rooomname);
+  // Sort from greather to fewer
+  const individual_student_presences = sortListByMinutes(student_presences);
+  const processed_presences = []; // It's going to contain something like : ['David: 104 minutes in 1 day',...]
+  // Make the necessary final calculations
+  individual_student_presences.forEach((student) => {
+    const student_all_presences = student_presences[student];
+    processed_presences.push(
+      genericStudentResult(student_all_presences, student)
+    );
+  });
+  return { processed_presences, discarded };
 };
