@@ -159,8 +159,8 @@ _nota: más adelante en este documento se detallan todos los scripts._
 
 - Al clonar el proyecto te encontrarás con la siguiente estructura en los directorios :
 
-- ![](https://i.imgur.com/vdlTSzC.png)
-  [Url imagen](https://i.imgur.com/vdlTSzC.png)
+- ![](https://i.imgur.com/bQy13L9.png)
+  [Url imagen](https://i.imgur.com/bQy13L9.png)
 
 - A continuación se detalla de forma general cada directorio y su funcionalidad, para mas adelante en este documento, especificar detalles y funcionamiento asociado :
 
@@ -176,6 +176,8 @@ _nota: más adelante en este documento se detallan todos los scripts._
 - ![](https://i.imgur.com/8sEa8EF.png)
   [Url imagen](https://i.imgur.com/8sEa8EF.png)
   _Todos quedarían descartados gracias a las validaciones y parámetros establecidos en este directorio_
+
+- 📂**entities**: Este directorio contiene entidades que hacen referencia a las propiedades de cada comando, para ser accedidas con mayor facilidad con un objeto descriptivo
 
 - 📂**test**: Como te imaginarás, este directorio contiene todo el testing de cada funcionalidad de la aplicación, contemplando cada caso de uso posible de forma rigurosa.
 
@@ -209,7 +211,6 @@ const VALIDATORS = {
     /^Presence [\w]+ [1-7] ((0[8-9])?(1[0-9])?(2[0-3])?:([0-5][0-9]\s)){2}[A-Z]\d{3}$/,
   MIN_DIFF_TIME: 300000,
   MILIS_TO_MINUTES: 60000,
-  EXTRACT_MINUTES_FROM_STR: /\d+\sminutes/,
 };
 ```
 
@@ -233,32 +234,6 @@ Como te dije, puedes ir jugando y probando estas combinaciones en el playground 
 
 **MIN_DIFF_TIME**: Tiempo mínimo de entrada vs salida (en milisegundos) para que una asistencia sea considerada.
 **MILIS_TO_MINUTES** : Constante que indica el número a dividir para convertir de milisegundos a minutos.<br>
-**EXTRACT_MINUTES_FROM_STR**: Extraer minutos de un log ya procesado, para convertirlos y trabajar con ellos. Por ejemplo:
-
-`Marco: 142 minutes in 2 days` : De esta entrada procesada solo obtendría : 142 minutes , con la finalidad de hacer el sorteo final del array en formato descendente.
-
-**VALIDATOR_PRESENCE_DETAILS ( )** : Realiza validaciones complejas una vez las validaciones base ya se realizaron con las regex, por ejemplo :
-
-```javascript
-const VALIDATOR_PRESENCE_DETAILS = (
-  students_list, // Lista de estudiantes procesada
-  presence_to_verify // Comando presencia con estructura válida
-) => {
-  if (students_list[presence_to_verify.student_id] === undefined)
-    // No válido si se registra una presencia sin un Student previo
-    return ERROR_DICTIONARY.STUDENT_NOT_REGISTERED;
-  let { enter_hour, left_hour } = presence_to_verify;
-  enter_hour = DateTime.fromISO(enter_hour);
-  left_hour = DateTime.fromISO(left_hour);
-  // No válido si la hora de entrada es mayor a la de salida
-  if (left_hour < enter_hour) return;
-  ERROR_DICTIONARY.ENTER_GREATHER_THAN_LEFT;
-  if (left_hour.toMillis() - enter_hour.toMillis() < VALIDATORS.MIN_DIFF_TIME)
-    // No válido si la presencia es menor al tiempo mínimo indicado
-    return ERROR_DICTIONARY.DIFF_NOT_ENOUGH;
-  return true;
-};
-```
 
 <br>
 
@@ -297,7 +272,7 @@ const readFile = async (file_name) => {
 
 <br>
 
-- **fileFormatter.js**: Encargado de formatear el array de comandos en crudo generado por _fileReader.js_, haciendo el primer filtro base de formato, apoyado de _VALIDATORS_ y las regex especificadas con el formato de cada comando, devolviendo una lista de : comandos de tipo Student, comandos de tipo Presence y comandos de tipo Discarded agrupados en un objeto JSON. Su estructura es la siguiente: 
+- **commandsExtractor.js**: Encargado de formatear el array de comandos en crudo generado por _fileReader.js_, haciendo el primer filtro base de formato, apoyado de _VALIDATORS_ y las regex especificadas con el formato de cada comando, devolviendo una lista de : comandos de tipo Student, comandos de tipo Presence y comandos de tipo Discarded agrupados en un objeto JSON. Su estructura es la siguiente: 
   
   ```javascript
   const getFile = async (filename) => {
@@ -323,7 +298,7 @@ const readFile = async (file_name) => {
 
 ```javascript
 // Recibe un formato de array en crudo, con comandos mixtos, invalidos, o validos, y los maneja de acuerdo a las validaciones de las regex, apoyandose en VALIDATORS
-const formatFile = async (raw_commands) => {
+const extractCommands = async (raw_commands) => {
   try {
     // Student,Presence y Discarded son los tipos de formato a generar
     let formatted_commands = {
@@ -366,7 +341,7 @@ const formatFile = async (raw_commands) => {
 
 <br>
 
-- **presenceValidator.js**: Encargado de tomar el primer array con los formatos y comandos saneados, para realizar las validaciones más complejas, asociadas con horas, comparaciones, inexistencia de Students registrados y la relación entre un comando Presence con un Student, para posteriormente generar el logger final de valor para el usuario, su estructura es la siguiente:
+- **entititesConstructor.js**: Encargado de tomar el primer array con los formatos y comandos saneados, para realizar las validaciones más complejas, asociadas con horas, comparaciones, inexistencia de Students registrados y la relación entre un comando Presence con un Student, para posteriormente generar el logger final de valor para el usuario, su estructura es la siguiente:
 
 ```javascript
 // Recibe el array saneado con formatFile.js
@@ -418,107 +393,6 @@ const presence_validator = async (formatted_array) => {
   }
 };
 ```
-
-<br>
-
-- **commandsCompiler.js**: El script mas complejo del proyecto. Su función es tomar un array procesado que contenga relaciones estudiante-asistencias, y realizar los cálculos correspondientes a la cantidad de minutos asistidos, verificar si los días de asistencias son diferentes, sortear el resultado en forma descendente, y establecer métodos para imprimir el procesado final por consola . Su estructura es la siguiente: <br><br>
-
-```javascript
- // Recibe una instancia unica de presencia, y calcula los dias diferentes de asistencia y los minutos asistidos
-const calculateDays = (student_presence, different_days) => {
-  let { day, enter_hour, left_hour } = student_presence;
-  if (!different_days.includes(day)) different_days.push(day);
-  enter_hour = DateTime.fromISO(enter_hour);
-  left_hour = DateTime.fromISO(left_hour);
-  const minutes_presence =
-    (left_hour.toMillis() - enter_hour.toMillis()) /
-    VALIDATORS.MILIS_TO_MINUTES;
-  return minutes_presence;
-};
-```
-   <br>
-   
-```javascript 
-   // El resultado final es un string informativo por lo que para sortearlo en orden descendente es necesario separar los minutos del string crudo para hacer la comparación final
-   const extractRawMinutes = (presence_string) => {
-   // Regex de VALIDATORS
-  const minutes_raw =
-    VALIDATORS.EXTRACT_MINUTES_FROM_STR.exec(presence_string)[0].split(" "); 
-	// Se seleccionan solo los minutos , mas no la palabra literal "Minutes"
-  const minutes_formatted = parseInt(minutes_raw[0]);
-  return minutes_formatted;
-};
-```
-   <br><br>
-```javascript
-   // Recibimos los estudiantes con sus presencias asociadas y comandos descartados 
-   const compileCommands = async ({ students_presence, discarded }) => {
-  try {
-  // Presencias procesadas son strings finales que informan 
-    let processed_presences = [];
-    Object.keys(students_presence).forEach((student_id) => {
-      switch (true) {
-	  // Si la key de un estudiante no tiene presencias, simplemente se queda en cero minutos
-        case students_presence[student_id].length === 0:
-          processed_presences.push(`${student_id}: 0 minutes`);
-          break;
-		  //Caso contrario se recorren todas las presencias asociadas al estudiante y se suman la cantidad de minutos, y dias diferentes, apoyandose en la funcion auxiliar calculateDays( ) explicada previamente
-        default:
-          let different_days = [];
-          let minutes_presence = 0;
-          let student_presences = students_presence[student_id];
-          student_presences.forEach((presence) => {
-            minutes_presence += calculateDays(
-              presence,
-              different_days,
-              minutes_presence
-            );
-          });
-          let day_text = different_days.length > 1 ? "days" : "day";
-          processed_presences.push(
-            `${student_id}: ${minutes_presence} minutes in ${different_days.length} ${day_text}`
-          );
-          break;
-      }
-    });
-	// Una vez el array es completado, se sortea en orden descendente apoyandose en la funcion auxiliar extractRawMinutes explicada previamente
-    processed_presences.sort((presence_string1, presence_string2) => {
-      const minutes_presence1 = extractRawMinutes(presence_string1);
-      const minutes_presence2 = extractRawMinutes(presence_string2);
-      return minutes_presence2 - minutes_presence1;
-    });
-	// Finalmente se retornan las presencias sorteadas y procesadas, y los comandos descartados finales para ser mostrados al usuario.
-    return { processed_presences, discarded };
-  } catch (exception) {
-    throw exception;
-  }
-};
-```
-<br><br/>
-
-```javascript
-// Funcion auxiliar que muestra el output final procesado en la CLI
-showLogger = async () => {
-  try {
-    const formatted_presences = await presenceValidator();
-    const { processed_presences, discarded } = await compileCommands(
-      formatted_presences
-    );
-    // Funciones y constantes de texto para mejor organizacion con títulos
-    console.log(ERROR_DICTIONARY.MINUTES_DISPLAY);
-    processed_presences.forEach((presence) => console.log(presence));
-    console.log(ERROR_DICTIONARY.DISCARDED_COMMAND_SEPARATOR);
-    console.log(
-      discarded.length === 0
-        ? ERROR_DICTIONARY.NO_DISCARDED_COMMANDS
-        : discarded
-    );
-  } catch (exception) {
-    console.log(exception.message);
-  }
-};
-```
-
 <br><br>
 
 **utils📂**: El directorio que contiene las constantes de configuración y diccionario de errores que se ha ido utilizando a lo largo de los orquestadores, su estructura es la siguiente :
@@ -581,22 +455,8 @@ en donde :<br>
 
 **test📂**: Contiene los tests realizados a cada parte del proyecto, siendo estos un total de 31 tests realizados, separados por categoría, la estructura es la siguiente :
 
-- **Compiler/commandsCompiler.js⚙️** :
-<br>
-
-  - Contiene tests para validar 5 casos de usos complejos:
-  
-  - **Test 1**: Verifica si el sistema cuenta correctamente los días en que un estudiante asistió al menos dos veces en un periodo.
-  - **Test 2**: Comprueba si el sistema calcula correctamente la duración total de la presencia del estudiante en un periodo específico.
-  - **Test 3**: Evalúa si el sistema suma correctamente la duración total de la asistencia y el número de días en que se registró la asistencia.
-  - **Test 4**: Asegura que el sistema maneje correctamente un archivo vacío, devolviendo resultados vacíos.
-  - **Test 5**: Verifica si el sistema ordena correctamente a los estudiantes según su tiempo de presencia, independientemente del orden inicial de los datos.
-
-_Resultado final✅ : 5/5 tests pasados._ <br><br>
-
 - **files/fileHandler.js📂🔍** :
 <br>
-
 
   - Contiene tests para validar 4 casos de usos comunes:
     
@@ -649,6 +509,308 @@ Contiene tests para validar 7 casos de usos complejos asociados a los valores co
 - **Test 7:** Verifica si el sistema devuelve un error cuando la hora de entrada es mayor que la hora de salida en un comando de presencia.<br>
 _Resultado final✅ : 7/7 tests pasados._ <br><br>
 
+### CHANGELOG 🔃:
+
+#### V1.1📄:
+**🚧 En esta version se introdujeron multiples cambios, que deprecaron algunos tests (ya eliminados), y cambiaron la estructura de algunos scripts, para hacerlos mas
+modulares. El README aun no refleja por completo estos cambios, por lo que se introducirán paulatinamente, así como los tests asociados a ellos.🚧**
+
+**✍️Semántica en nombrado de ficheros mejorada**: Algunos nombres de ficheros fueron cambiados para proporcionar una descripcion mas semántica de su funcionalidad, por ejemplo en el directorio tools, se cambiaron los siguientes ficheros:
+
+_file_formatter.js_: Pasó a ser _commands_extractor.js_ 
+_presence_validator.js_: Pasó a ser _entitiesConstructor.js_
+_compileCommands.js_: Pasó a ser _compiler.js_
+
+La finalidad de estos cambios es proporcionar una manera más descriptiva para conocer el propósito detrás de cada fichero, sin necesidad de revisar el código para saber su utilidad principal.
+
+**👨‍🏫Comando Classroom agregado en helpers/validators.js**: En virtud de añadir soporte al requerimiento de un nuevo comando 'Classroom', se añadio una nueva expresion regular que valida esta estructura de commando en los validadores generales. la expresion regular que lo distingue es la siguiente:
+
+```javascript
+{CLASSROOM_COMMAND: /^Classroom [A-Z]\d{3} [a-zA-Z0-9]+ (\d{2}\.\d\s?){2}$/}
+```
+En donde su estructura a cumplimentar es: Palabra Classroom seguido de un codigo de sala en formato LETRA+3numeros, seguido de un nombre y/o numero de sala, seguido de las coordenadas de la sala en cuestion en formato numero.numero numero.numero (ej: 17.5 10.2), recuerda que puedes visitar el playground de [RegExr](https://regexr.com). para testeo y casos de uso.
+
+**📖Nuevos registros en el diccionario utils/errorsDictionary.js**: Se añadieron nuevos registros en el diccionario para representar errores nuevos asociados al comando Classroom, asi como Strings de utilidades para representar datos procesados en la consola, en donde: 
+
+```javascript
+{
+CLASSROM_DETAILS_NOT_PROVIDED: "Indica que una presencia en una sala de clases especifica no tiene un comando previo Classroom, detallando la sala en cuestión",
+ARROW_STRING: "Indicador descriptivo para imprimir datos en consola en el formato Registro->Explicacion",
+COMMA_STRING:"Indicador descriptivo para imprimir datos en consola en el formato Registro1,Registro2",
+DISCARDED_COMMAND_SEPARATOR: "Titulo descriptivo para indicar comandos descartados",
+NO_DISCARDED_COMMANDS: "Titulo descriptivo para indicar que no hubieron comandos descartados",
+STUDENTS_GROUP_RESULT: "Titulo descriptivo para indicar que las siguientes entradas imprimidas corresponden a una agrupacion por estudiante",
+ROOMS_GROUP_RESULT: "Titulo descriptivo para indicar que las siguientes entradas imprimidas corresponden a una agrupacion por salon de clases,
+TRAVELS_GROUP_RESULT: "Titulo descriptivo para indicar que las siguientes entradas imprimidas corresponden a las visitas que tuvo el estudiante a las diversas salas, en orden de dias especificos",
+PRESENCES_BY_ROOMNAME: "Titulo descriptivo para indicar que las siguientes entradas imprimidas corresponden a una agrupacion por una sala con un nombre específico",
+}
+```
+
+**🔃Cambios en la extraccion de comandos y disponibilización de las entidades tratadas (tools/commandsExtractor.js)**: Se introdujo una nueva agrupación y validación de comandos asociada al comando Clasroom, por lo que el resultado de los comandos extraidos en crudo, ahora retorna tambien un array de comandos del tipo "Clasroom", a continuacion puedes observar donde se encuentra:
+
+```javascript
+export const commandsExtractor = async (raw_commands) => {
+  try {
+    let extracted_commands = {
+      Student: [],
+      Presence: [],
+      Classroom: [], // Soporte para el comando classroom
+      Discarded: [],
+    };
+    raw_commands.forEach((raw_command) => {
+      let raw_command_trim = raw_command.trimEnd().trimStart();
+      switch (true) {
+        // Es un comando tipo Student
+        case VALIDATORS.STUDENT_COMMAND.test(raw_command_trim):
+          if (!extracted_commands.Student.includes(raw_command_trim))
+            extracted_commands.Student.push(raw_command_trim);
+          break;
+
+        // Es un comando tipo Presence
+        case VALIDATORS.PRESENCE_COMMAND.test(raw_command_trim):
+          if (!extracted_commands.Presence.includes(raw_command_trim))
+            extracted_commands.Presence.push(raw_command_trim);
+          break;
+
+        // Es un comando tipo Classroom
+        case VALIDATORS.CLASSROOM_COMMAND.test(raw_command_trim):
+          if (!extracted_commands.Classroom.includes(raw_command_trim))
+            extracted_commands.Classroom.push(raw_command_trim);
+          break;
+
+        // Es un input invalido que pasa a descarte
+        default:
+          extracted_commands.Discarded.push(
+            new Discarded(raw_command, ERROR_DICTIONARY.INVALID_COMMAND_FORMAT)
+          );
+          break;
+      }
+    });
+    // El retorno de comandos finales incluye un array de comandos Classroom
+    return extracted_commands;
+  } catch (exception) {
+    throw exception;
+  }
+};
+```
+
+**📂Creacion del directorio Entities:** En esta version se introdujo un nuevo directorio "Entities" en el proyecto, este directorio, cumple la funcion de agrupar las propiedades de cada uno de los comandos en clases y objetos, por lo que ahora, las responsabilidades para validar casos de uso específicos, recaen directamente sobre la clase y el tipo de entidad en cuestión, a continuación se presenta un ejemplo con la entidad de "Presences":
+
+```js
+// Imports y dependencias propias de la Entidad
+import { DateTime } from "luxon";
+import ERROR_DICTIONARY from "../utils/errorsDictionary.js";
+import { VALIDATORS } from "../helpers/validators.js";
+
+// Construccion de un objeto con atributos propios de una Presencia
+export class Presence {
+  constructor(room, student_id, enter_hour, left_hour, day) {
+    this.room = room;
+    this.student_id = student_id;
+    this.enter_hour = enter_hour;
+    this.left_hour = left_hour;
+    this.day = day;
+    this.minutes = this.calculateMinutes(enter_hour, left_hour);
+  }
+
+// Ahora, el calculo de minutos totales de presencia es responsabilidad única de esta entidad, haciendo mas reusable los extractores de comandos, y el compilador final
+  calculateMinutes(enter_hour_raw, left_hour_raw) {
+    const enter_hour = DateTime.fromISO(enter_hour_raw);
+    const left_hour = DateTime.fromISO(left_hour_raw);
+    const minutes_presence =
+      (left_hour.toMillis() - enter_hour.toMillis()) /
+      VALIDATORS.MILIS_TO_MINUTES;
+    return minutes_presence;
+  }
+
+  getPresence() {
+    return {
+      room: this.room,
+      minutes: this.minutes,
+      student_id: this.student_id,
+      enter_hour: this.enter_hour,
+      left_hour: this.left_hour,
+      day: this.day,
+    };
+  }
+
+// El mismo caso aplica para la validacion propia de la presencia, una vez se construye el objeto, este metodo es llamado para verificar el cumplimiento de las restricciones //asociadas
+  isValidPresence(list_students, list_classrooms) {
+    const presence_to_verify = this.getPresence();
+    let student_was_registered = false;
+    let classroom_was_registered = false;
+    list_students.forEach((student_object) => {
+      // Student was previously registered?
+      if (student_object.student_id === presence_to_verify.student_id) {
+        student_was_registered = true;
+        return;
+      }
+    });
+    list_classrooms.forEach((classroom_object) => {
+      if (classroom_object.room_code === presence_to_verify.room) {
+        classroom_was_registered = true;
+        return;
+      }
+    });
+    let { enter_hour, left_hour } = presence_to_verify;
+    enter_hour = DateTime.fromISO(enter_hour);
+    left_hour = DateTime.fromISO(left_hour);
+    // La hora de entrada no debe ser mayor a la de salida
+    if (left_hour < enter_hour)
+      return ERROR_DICTIONARY.ENTER_GREATHER_THAN_LEFT;
+
+    // Presencia de al menos 5 minutos
+    if (left_hour.toMillis() - enter_hour.toMillis() < VALIDATORS.MIN_DIFF_TIME)
+      return ERROR_DICTIONARY.DIFF_NOT_ENOUGH;
+
+    // El classroom y el estudiante de la presencia, deben estar registrados previamente
+    return student_was_registered
+      ? classroom_was_registered
+        ? true
+        : ERROR_DICTIONARY.CLASSROM_DETAILS_NOT_PROVIDED
+      : ERROR_DICTIONARY.STUDENT_NOT_REGISTERED;
+  }
+}
+
+
+```
+_Como se menciona, las validaciones propias del comando específico, pasan ahora a ser responsabilidad de la clase misma, por lo que helpers/validators.js, unicamente contempla ahora, validaciones generales asociadas a la estructura de los comandos_
+
+**🆕Nuevo fichero en tools ->groupers.js** : Este fichero permite generar un enfoque mas flexible en toda la aplicacion. Su objetivo es permitir la introduccion de nuevas formas de agrupamiento, filtrado, y tratamiento de los datos extraidos de los comandos en general, de forma aislada. de tal manera que no dañe el funcionamiento de los demas tipos de agrupaciones, al momento de introducir nuevas cláusulas. Un ejemplo de agrupamiento, por estudiantes:
+
+```javascript
+// Unico agrupamiento que recopila datos por separado de el constructor de entidades
+export const groupByStudent = async () => {
+  const { students, presences, discarded } = await entitites_constructed();
+  // Algoritmo propio de agrupacion, por estudiante
+  const student_presences = {};
+  students.forEach((student_entity) => {
+    if (student_presences[student_entity.student_id] === undefined)
+      student_presences[student_entity.student_id] = [];
+  });
+
+  presences.forEach((presence_entity) => {
+    student_presences[presence_entity.student_id].push(presence_entity);
+  });
+
+  // Una vez tratados los datos, se retornan para ser tratados por el compilador
+  return { student_presences, discarded };
+};
+```
+_de la misma forma anterior, se pueden generar cuantas agrupaciones nuevas sean necesarias, en diferentes modulos de este fichero, lo que permite una mayor flexibilidad y como consecuencia menor acoplamiento y dependencia entre modulos_
+
+**🔃Cambios en el compilador tools ->compiler.js** : Se introdujeron cambios en la manera en que se procesan los datos finales, al existir ahora un agrupamiento en base a necesidades especificas de procesamiento, tales como agrupacion por estudiantes, salas, viajes, etc. El compilador por su parte, ahora trabaja de forma individual y aislada tambien, para cada una de estas agrupaciones. Separando la logica y evitando rupturas del código y funcionalidades existentes a largo plazo, a continuacion te presento un ejemplo del compilador, para agrupaciones en base a los estudiantes:
+
+```javascript
+export const getStudentGroupResult = async () => {
+// Los datos de la agrupacion especifica son devuelvos por groupers.js
+  let { student_presences, discarded } = await groupByStudent();
+  // El sorteo de datos en orden descendente, pasa a ser una funcion reutilizable del compilador, independiente del tipo de agrupacion
+  const individual_student_presences = sortListByMinutes(student_presences);
+  const processed_presences = []; 
+  // El calculo de minutos asistidos por estudiante pasa a ser una funcion reutilizable del compilador, independiente del tipo de agrupacion
+  individual_student_presences.forEach((student) => {
+    const student_all_presences = student_presences[student];
+    processed_presences.push(
+      genericStudentResult(student_all_presences, student)
+    );
+  });
+  return { processed_presences, discarded };
+};
+```
+_como puedes observar, ahora el agrupamiento de datos en base a un criterio especifico, es una tarea delegada a groupers.js, por lo que tambien se reduce la complejidad del compilador, quien a su vez, se apoya de funciones independientes y reusables para el sorteo y calculo de minutos totales de asistencia asociados a un estudiante_
+
+**🆕Funcionalidades de utilidad nuevas en el compilador tools ->compiler.js** : Se añadieron funciones de utilidad reusables para el compilador, estas incluyen el calculo de minutos totales de presencia de cada estudiante, y el sorteo descendente de los registros en base a la cantidad de minutos de la presencia. Los cuales funcionan en base a una lista de estudiantes que se provee por parametros, y de forma independiente de la clausula de agrupamiento desde la que se llamaron. A continuacion las funciones: 
+
+```javascript
+const genericStudentResult = (student_presences, student_id) => {
+  let total_minutes = 0;
+  let different_days = [];
+  let processed_presence_string = `${student_id} : `;
+  if (student_presences.length === 0) {
+    // Si la presencia total es igual a cero
+    processed_presence_string += `0 minutes`;
+    return processed_presence_string;
+  } else {
+    // Si es mas de cero se calcula la suma total de minutos
+    student_presences.forEach((presence) => {
+      total_minutes += presence.minutes;
+      different_days.includes(presence.day)
+        ? different_days
+        : different_days.push(presence.day);
+    });
+    // Se construye un string descriptivo final que sera imprimido en la consola
+    processed_presence_string += `${total_minutes} minutes in ${different_days.length} `;
+    processed_presence_string += different_days.length == 1 ? "day" : "days";
+    return processed_presence_string;
+  }
+};
+```
+```javascript
+const sortListByMinutes = (student_presences) => {
+  // Se retorna cada presencia del estudiante sorteada por la cantidad de minutos de presencia en orden descendente
+  return Object.keys(student_presences).sort((st1, st2) => {
+    const st1_array = student_presences[st1];
+    const st2_array = student_presences[st2];
+    const minutes_acc_1 = st1_array.reduce((minutes,presence)=>(minutes+presence.minutes),0);
+    const minutes_acc_2 = st2_array.reduce((minutes,presence)=>(minutes+presence.minutes),0);
+    return minutes_acc_2 - minutes_acc_1;
+  });
+};
+
+```
+**🆕Nuevo script utils/logger.js** : Este script es sencillo pero muy util, se apoya en la dependencia _kleur_, la cual fue agregada en esta version. Es capaz de imprimir datos en consola con diferentes estilos, lo que permite agrupar los datos de una forma visual mas facil de identificar para el usuario. Su implementacion:
+
+```javascript
+import kleur from "kleur";
+
+// Estilos definidos por parametros
+const styles = {
+  WARN_TITLE: kleur.bold().bgYellow().underline,
+  INFO_TITLE: kleur.bold().bgGreen().underline,
+  INDICATOR: kleur.bold().yellow,
+  TEXT: kleur.white,
+};
+
+// Utilidad print, que imprime un titulo y/o texto entregado por parametros, con uno de los estilos solicitados que se encuentran en styles{...}
+const print = (title, style) => {
+  const writter = styles[style];
+  console.log(writter(title));
+};
+
+// Se exporta la utilidad print para ser utilizada en app.js
+export default print;
+
+```
+
+
+**🆕Funcionalidades de utilidad nuevas en el punto de entrada (app.js)** : Todas las utilidades y funciones referentes a imprimir en la consola las presencias procesadas de acuerdo a las diferentes clausulas de agrupacion, se encuetran ahora en app.js, la cual se apoya en logger.js, con la finalidad de imprimir los datos obtenidos y titulos declarados en _utils/errorDictionary.js_ de una forma mas amigable para el usuario. Ejemplo de implementacion: 
+
+```javascript
+/************ UTILS *************/
+const print_processed = (processed, title) => {
+  // El logger procesa los estilos e imprime de acuerdo a lo especificado
+  print(title, "INFO_TITLE");
+  processed.length === 0
+    ? print("NO RESULTS", "INDICATOR")
+    : processed.forEach((stp) => print(`${stp}`, "TEXT"));
+};
+
+```
+```javascript
+// El metodo inicializar contiene todos los tipos de agrupaciones diferentes imprimidos en consola, asi como la impresion de los comandos descartados al final
+const initialize = async () => {
+  await print_presences_by_room();
+  await print_travels_student();
+  await print_filtered_roomname("LAB4");
+  await print_presences_by_student();
+  await print_discarded();
+};
+```
+![](https://i.imgur.com/s0tpsIL.png)
+[Url imagen](https://i.imgur.com/s0tpsIL.png)
+_los datos son presentados con mayor orden_
+
 ### Levantando el proyecto 👩‍🚀🚀
 
 Asegúrate de tener Node.js instalado en tu sistema. Puedes descargarlo desde [nodejs.org](https://nodejs.org/).
@@ -663,6 +825,7 @@ Asegúrate de tener Node.js instalado en tu sistema. Puedes descargarlo desde [n
 [Chai](https://www.chaijs.com/): Biblioteca de aserciones para Node.js y navegadores.<br>
 [Mocha](https://mochajs.org/):Framework de pruebas para Node.js.<br>
 [Luxon](https://moment.github.io/luxon/#/?id=luxon): Biblioteca moderna de manipulación de fechas y horas para JavaScript.<br>
+[Kleur](https://www.npmjs.com/package/kleur): Biblioteca basada en el rendimiento para poder imprimir colores en la consola de Node.<br>
 
 ### Ejecución y scripts asociados: 🏃‍♂️🏃
 
@@ -671,7 +834,6 @@ Asegúrate de tener Node.js instalado en tu sistema. Puedes descargarlo desde [n
 - `npm run test_commands`: Este comando ejecutará todos los test asociados únicamente a el formato básico a cumplimentar de los comandos.<br><br>
 - `npm run test_commands_values`: Este comando ejecutará todos los test asociados únicamente a los valores a cumplimentar de los comandos y que estos sean íntegros.<br><br>
 - ` npm run test_file_handler`: Este comando ejecutará todos los test asociados únicamente a el manejo de ficheros.<br><br>
-- `npm run test_commands_compiler`: Este comando ejecutará todos los test asociados únicamente a el procesamiento final de los comandos saneados.<br><br>
 
 ### 🙋 Candidato
 
