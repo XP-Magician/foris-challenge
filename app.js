@@ -10,11 +10,15 @@ import ERROR_DICTIONARY from "./utils/errorsDictionary.js";
 // Must recibe a node param with the name of the file , for example : node app.js "myfile.txt" , you can change the default location to
 // search the file in utils/config : COMMANDS_DIRECTORY constant.
 const initialize = async () => {
-  await print_presences_by_room();
-  await print_travels_student();
-  await print_filtered_roomname("LAB4");
-  await print_presences_by_student();
-  await print_discarded();
+  try {
+    await print_presences_by_room();
+    await print_travels_student();
+    await print_filtered_roomname("LAB4");
+    await print_presences_by_student();
+    await print_discarded();
+  } catch (ex) {
+    print(ex.message, "WARN_TITLE");
+  }
 };
 
 /************* PROCESSED PRINTERS ******************/
